@@ -1,0 +1,11 @@
+{
+    "name": "simple-twitch-chat-visualizer",
+    "version": "1.0.0",
+    "description": "Twitch Chat Visualizer",
+    "main": "app.js",
+    "author": "Thomas Davis",
+    "license": "ISC",
+    "dependencies": {
+        "tmi.js": "^1.8.3"
+    }
+  }
