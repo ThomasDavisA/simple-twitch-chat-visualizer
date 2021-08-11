@@ -1,0 +1,11 @@
+{
+    "name": "kobold-adventures-server",
+    "version": "1.0.0",
+    "description": "Kobold Adventures! server",
+    "main": "app.js",
+    "author": "Thomas Davis",
+    "license": "ISC",
+    "dependencies": {
+        "tmi.js": "^1.8.3"
+    }
+  }
