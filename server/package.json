@@ -1,7 +1,7 @@
 {
-    "name": "kobold-adventures-server",
+    "name": "simple-twitch-chat-visualizer",
     "version": "1.0.0",
-    "description": "Kobold Adventures! server",
+    "description": "Twitch Chat Visualizer",
     "main": "app.js",
     "author": "Thomas Davis",
     "license": "ISC",
