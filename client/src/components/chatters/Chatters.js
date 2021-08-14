@@ -27,8 +27,7 @@ function Chatter(props) {
 export default class Chatters extends React.Component {
 	constructor(props) {
 		super(props)
-		this.Items = props.Items
-		this.ItemsList = this.Items.map((Item) => <li><Chatter name={Item}/></li>)
+		this.state = {Items: [1, 2, 3]};
 	}
 
 	componentDidMount() {
@@ -43,14 +42,24 @@ export default class Chatters extends React.Component {
 	}
 
 	Request() {
+		let Count = Math.max(Math.floor(Math.random() * 5), 1);
+
+		let Items = [];
+		for (let I = 0; I < Count; I++) {
+			let ID = Math.floor(Math.random() * 1000);
+			Items.push(ID);
+		}
+
+		this.setState({Items: Items});
 	}
 
 	render() {
 		return (
 		<div>
 			<h2>Chatters</h2>
-			<ul className="Chatters">
-				{this.ItemsList}
+			<ul className="Chatters"> {
+				this.state.Items.map(Item => <li><Chatter name={Item}/></li>)
+			}
 			</ul>
 		</div>
 		);
