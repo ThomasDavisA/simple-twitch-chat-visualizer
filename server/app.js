@@ -1,4 +1,7 @@
 const tmi = require('tmi.js');
+const express = require('express')
+
+const app = express();
 
 const client = new tmi.Client({
 	channels: [ 'kealldin' ]
@@ -34,6 +37,26 @@ client.on('message', (channel, tags, message, self) => {
 	}
 	userList[tags.username] = userStatus;
 });
+
+app.get('/api/users', function (req, res) {
+	res.json(userList)
+  })
+
+app.use(function errorHandler(error, req, res, next) {
+    let response
+    console.log(error)
+    if (NODE_ENV === 'production') {
+        response = { error: { message: 'server error' } }
+    } else {
+        console.error(error)
+        response = { message: error.message, error }
+    }
+    res.status(500).json(response)
+})
+
+app.listen(8000, () => {
+	console.log('Server Listening at http://localhost:8000')
+})
 
 //debug
 setInterval(() => {

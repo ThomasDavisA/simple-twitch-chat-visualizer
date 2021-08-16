@@ -6,6 +6,7 @@
     "author": "Thomas Davis",
     "license": "ISC",
     "dependencies": {
+        "express": "^4.17.1",
         "tmi.js": "^1.8.3"
     }
-  }
+}
