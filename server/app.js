@@ -1,7 +1,15 @@
 const tmi = require('tmi.js');
 const express = require('express')
+const cors = require('cors')
+
+const corsOptions = {
+	origin: "*",
+	optionsSuccessStatus: 200
+}
 
 const app = express();
+app.use(cors(corsOptions))
+
 
 const client = new tmi.Client({
 	channels: [ 'kealldin' ]
