@@ -42,15 +42,19 @@ export default class Chatters extends React.Component {
 	}
 
 	Request() {
-		let Count = Math.max(Math.floor(Math.random() * 5), 1);
-
-		let Items = [];
-		for (let I = 0; I < Count; I++) {
-			let ID = Math.floor(Math.random() * 1000);
-			Items.push(ID);
-		}
-
-		this.setState({Items: Items});
+		fetch("http://localhost:8000/api/users")
+			.then(res => res.json())
+			.then((result) => {
+				let Items = [];
+				for (const Item in result) {
+					Items.push(Item);
+				}
+				this.setState({Items: Items});
+			},
+			(error) => {
+				console.log("Error: " + error);
+			}
+		);
 	}
 
 	render() {
