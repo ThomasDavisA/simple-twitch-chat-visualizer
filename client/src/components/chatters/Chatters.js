@@ -1,11 +1,6 @@
+import Avatar from '../avatar/Avatar'
 import React from 'react'
 import './Chatters.css'
-
-function Avatar(props) {
-	return (
-		<img className="Avatar" src={window.location.origin + "/logo192.png"} alt="Avatar"></img>
-	)
-}
 
 function NamePlate(props) {
 	return (
