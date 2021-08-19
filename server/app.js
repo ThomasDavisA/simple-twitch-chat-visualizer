@@ -11,8 +11,10 @@ const app = express();
 app.use(cors(corsOptions))
 
 
+const { NODE_ENV, PORT, CHANNELS } = require('./config')
+
 const client = new tmi.Client({
-	channels: [ 'kealldin' ]
+	channels: [ CHANNELS ]
 });
 
 const userList = {}
@@ -62,8 +64,8 @@ app.use(function errorHandler(error, req, res, next) {
     res.status(500).json(response)
 })
 
-app.listen(8000, () => {
-	console.log('Server Listening at http://localhost:8000')
+app.listen(PORT, () => {
+	console.log(`Server Listening at http://localhost:${PORT}`)
 })
 
 //debug
