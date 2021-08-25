@@ -1,6 +1,9 @@
 const tmi = require('tmi.js');
-const express = require('express')
-const cors = require('cors')
+const express = require('express');
+const cors = require('cors');
+
+//const twitchAPI = require('./twitch-api-service');
+const { getTwitchToken, getUserByUsername } = require('./twitch-api-service');
 
 const corsOptions = {
 	origin: "*",
@@ -10,21 +13,27 @@ const corsOptions = {
 const app = express();
 app.use(cors(corsOptions))
 
-
-const { NODE_ENV, PORT, CHANNELS } = require('./config')
+const { NODE_ENV, PORT, CHANNELS } = require('./config');
 
 const client = new tmi.Client({
 	channels: [ CHANNELS ]
 });
 
-const userList = {}
+const userList = {};
+let twitchAccessToken = '';
+
+getTwitchToken().then((token) => {
+	twitchAccessToken = token;
+})
 
 client.connect();
 
 client.on('join', (channel, username, self) => {
 	if (self) return;
 	console.log(`${username} has joined ${channel}`);
-	userList[username] = {};
+	if(!userList[username])
+		userList[username] = {};
+		getUserByUsername(username, twitchAccessToken);
 })
 
 client.on('part', (channel, username, self) => {
@@ -69,6 +78,7 @@ app.listen(PORT, () => {
 })
 
 //debug
-setInterval(() => {
-		console.log(userList);
-}, 3000);
+// setInterval(() => {
+// 	console.log(userList);
+// 	console.log(twitchAccessToken);
+// }, 3000);
