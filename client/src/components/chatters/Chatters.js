@@ -13,7 +13,7 @@ function NamePlate(props) {
 function Chatter(props) {
 	return (
 		<div className="Chatter">
-			<Avatar />
+			<Avatar id={props.name}/>
 			<NamePlate name={props.name} />
 		</div>
 	)
