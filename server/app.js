@@ -52,7 +52,9 @@ client.on('message', (channel, tags, message, self) => {
 		userSubBadge: tags['badge-info'],
 		isUserSubbed: tags.subscriber,
 		userColor: tags.color,
-		userMessage: message
+		userMessage: message,
+		userId: tags['user-id'],
+		timeStamp: tags['tmi-sent-ts']
 	}
 	userList[tags.username] = userStatus;
 });
