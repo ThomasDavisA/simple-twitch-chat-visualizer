@@ -1,0 +1,16 @@
+.List {
+	position: absolute;
+	list-style-type: none;
+	border: solid 1px;
+	border-radius: 2px;
+	border-width: 2px;
+	border-color: black;
+	background: solid;
+	background: #282c34;
+	margin: 0;
+	height: auto;
+	box-shadow: 0 0 20px 0 #000;
+	padding: 2px 0 2px 0;
+	width: 150px;
+	opacity: 1;
+}
