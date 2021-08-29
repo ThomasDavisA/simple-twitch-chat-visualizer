@@ -1,4 +1,5 @@
 import Avatar from '../avatar/Avatar'
+import ChattersContextMenu from './ChattersContextMenu'
 import React from 'react'
 import './Chatters.css'
 
@@ -22,7 +23,14 @@ function Chatter(props) {
 export default class Chatters extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = {Items: [1, 2, 3]};
+		this.state = {
+			Items: [1, 2, 3],
+			Removed: [],
+			contextMenuTarget: null,
+			xPos: "0px",
+			yPos: "0px"
+		};
+		this.onClick = this.onClick.bind(this)
 	}
 
 	componentDidMount() {
@@ -30,10 +38,41 @@ export default class Chatters extends React.Component {
 			() => this.Request(),
 			3000
 		);
+
+		document.addEventListener("click", this.onClick);
 	}
 
 	componentWillUnmount() {
 		clearInterval(this.TimerID);
+		document.removeEventListener("click", this.onClick);
+	}
+
+	onClick(event) {
+		if (this.state.contextMenuTarget) {
+			this.setState({contextMenuTarget: null});
+		}
+	}
+
+	contextMenu(id, event) {
+		event.preventDefault();
+		this.setState({
+			contextMenuTarget: id,
+			xPos: event.pageX + "px",
+			yPos: event.pageY + "px"
+		});
+	}
+
+	onContextMenuSelection(id) {
+		let Removed = this.state.Removed;
+		if (id === "Remove") {
+			if (!Removed.includes(this.state.contextMenuTarget)) {
+				Removed.push(this.state.contextMenuTarget);
+			}
+		}
+		this.setState({
+			contextMenuTarget: null,
+			Removed: Removed
+		});
 	}
 
 	Request() {
@@ -53,13 +92,21 @@ export default class Chatters extends React.Component {
 	}
 
 	render() {
+		let Items = [];
+		for (const Item of this.state.Items) {
+			if (!this.state.Removed.includes(Item)) {
+				Items.push(<li onContextMenu={this.contextMenu.bind(this, Item)}><Chatter name={Item}/></li>);
+			}
+		}
 		return (
 		<div>
 			<h2>Chatters</h2>
 			<ul className="Chatters"> {
-				this.state.Items.map(Item => <li><Chatter name={Item}/></li>)
+				Items
 			}
-			</ul>
+			</ul> {
+				this.state.contextMenuTarget && <ChattersContextMenu onItemSelected={(id) => this.onContextMenuSelection(id)} xPos={this.state.xPos} yPos={this.state.yPos}/>
+			}
 		</div>
 		);
 	}
