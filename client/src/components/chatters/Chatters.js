@@ -1,24 +1,7 @@
-import Avatar from '../avatar/Avatar'
 import ChattersContextMenu from './ChattersContextMenu'
+import Chatter from './Chatter'
 import React from 'react'
 import './Chatters.css'
-
-function NamePlate(props) {
-	return (
-		<div className="NamePlate">
-			{props.name}
-		</div>
-	)
-}
-
-function Chatter(props) {
-	return (
-		<div className="Chatter">
-			<Avatar id={props.name}/>
-			<NamePlate name={props.name} />
-		</div>
-	)
-}
 
 export default class Chatters extends React.Component {
 	constructor(props) {

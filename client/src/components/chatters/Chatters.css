@@ -1,14 +1,3 @@
-.NamePlate {
-	text-align: left;
-	margin-left: 16px;
-}
-
-.Chatter {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
 .Chatters {
 	list-style-type: none;
 	width: 100vw;
