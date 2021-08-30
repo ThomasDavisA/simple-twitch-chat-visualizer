@@ -11,5 +11,8 @@
 
 .Chatters {
 	list-style-type: none;
+	width: 100vw;
 	padding-left: 0;
+	display: flex;
+	justify-content: space-evenly;
 }
