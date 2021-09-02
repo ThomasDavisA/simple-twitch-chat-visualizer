@@ -2,6 +2,14 @@ import Avatar from '../avatar/Avatar'
 import React from 'react'
 import './Chatter.css'
 
+function ChatBubble(props) {
+	return (
+		<div className="ChatBubble">
+			{props.message}
+		</div>
+	)
+}
+
 function NamePlate(props) {
 	return (
 		<div className="NamePlate">
@@ -14,7 +22,20 @@ export default class Chatter extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			name: props.name
+			name: props.name,
+			message: props.message,
+			timeStamp: 0
+		};
+	}
+
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		if (this.state.name === prevProps.name) {
+			if (this.state.timeStamp < prevProps.timeStamp) {
+				this.setState({
+					message: prevProps.message,
+					timeStamp: prevProps.timeStamp
+				});
+			}
 		}
 	}
 
@@ -23,6 +44,7 @@ export default class Chatter extends React.Component {
 			<div className="Chatter">
 				<Avatar id={this.state.name} />
 				<NamePlate name={this.state.name} />
+				<ChatBubble key={this.state.timeStamp} message={this.state.message} />
 			</div>
 		)
 	}

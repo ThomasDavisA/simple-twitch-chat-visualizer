@@ -1,3 +1,21 @@
+@keyframes fadeOut {
+	0% {opacity: 1;}
+	30% {opacity: 1;}
+	100% {opacity: 0;}
+}
+
+.ChatBubble {
+	position: absolute;
+	transition: opacity .3s ease-in-out;
+	animation: fadeOut 10s;
+	opacity: 0;
+	background: #9199a8;
+	margin-top: -96px;
+	margin-left: 64px;
+	padding: 10px;
+	border-radius: 5px;
+}
+
 .NamePlate {
 	text-align: left;
 	margin-left: 16px;

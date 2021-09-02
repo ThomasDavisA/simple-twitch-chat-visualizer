@@ -7,7 +7,11 @@ export default class Chatters extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			Items: [1, 2, 3],
+			Items: {
+				"1": {message: "", timeStamp: 0},
+				"2": {message: "", timeStamp: 0},
+				"3": {message: "", timeStamp: 0}
+			},
 			Removed: [],
 			contextMenuTarget: null,
 			xPos: "0px",
@@ -64,7 +68,10 @@ export default class Chatters extends React.Component {
 			.then((result) => {
 				let Items = [];
 				for (const Item in result) {
-					Items.push(Item);
+					Items[Item] = {
+						message: result[Item].userMessage,
+						timeStamp: result[Item].timeStamp
+					}
 				}
 				this.setState({Items: Items});
 			},
@@ -76,9 +83,10 @@ export default class Chatters extends React.Component {
 
 	render() {
 		let Items = [];
-		for (const Item of this.state.Items) {
+		for (const Item in this.state.Items) {
 			if (!this.state.Removed.includes(Item)) {
-				Items.push(<li onContextMenu={this.contextMenu.bind(this, Item)}><Chatter name={Item}/></li>);
+				let user = this.state.Items[Item]
+				Items.push(<li onContextMenu={this.contextMenu.bind(this, Item)}><Chatter name={Item} message={user.message} timeStamp={user.timeStamp}/></li>);
 			}
 		}
 		return (
