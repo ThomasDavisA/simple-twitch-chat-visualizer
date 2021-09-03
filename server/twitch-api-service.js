@@ -31,5 +31,5 @@ module.exports.getUserByUsername = async function(user, auth) {
     }
 
     const res = await response.json();
-    console.log(res);
+    return res.data[0];
 }

@@ -8,6 +8,7 @@ function importAll(r) {
 const imgHeads = importAll(require.context('../../images/head'));
 const imgTorsos = importAll(require.context('../../images/torso'));
 const imgLegs = importAll(require.context('../../images/legs'));
+const imgKobold = importAll(require.context('../../images/kobold'));
 
 var IDs = {}
 
@@ -29,17 +30,19 @@ export default class Avatar extends react.Component {
 			IDs[ID] = {
 				head: getRandomElement(imgHeads),
 				torso: getRandomElement(imgTorsos),
-				legs: getRandomElement(imgLegs)
+				legs: getRandomElement(imgLegs),
+				kobold: getRandomElement(imgKobold)
 			}
 		}
 		let head = IDs[ID].head
 		let torso = IDs[ID].torso
 		let legs = IDs[ID].legs
+		let kobold = IDs[ID].kobold
 		return (
 			<div>
-				<Part className="Avatar" element={head} />
-				<Part className="Avatar-Row-Child" element={torso} />
-				<Part className="Avatar-Row-Child" element={legs} />
+				<Part className="Avatar" element={kobold} />
+				{/* <Part className="Avatar-Row-Child" element={torso} />
+				<Part className="Avatar-Row-Child" element={legs} /> */}
 			</div>
 		)
 	}

@@ -8,9 +8,7 @@ export default class Chatters extends React.Component {
 		super(props)
 		this.state = {
 			Items: {
-				"1": {message: "", timeStamp: 0},
-				"2": {message: "", timeStamp: 0},
-				"3": {message: "", timeStamp: 0}
+				
 			},
 			Removed: [],
 			contextMenuTarget: null,
