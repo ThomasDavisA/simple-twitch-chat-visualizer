@@ -3,13 +3,13 @@ import Chatter from './Chatter'
 import React from 'react'
 import './Chatters.css'
 
+const ENDPOINT = process.env.REACT_APP_ENDPOINT;
+
 export default class Chatters extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			Items: {
-				
-			},
+			Items: {},
 			Removed: [],
 			contextMenuTarget: null,
 			xPos: "0px",
@@ -61,7 +61,7 @@ export default class Chatters extends React.Component {
 	}
 
 	Request() {
-		fetch("http://localhost:8000/api/users")
+		fetch(ENDPOINT + "api/users")
 			.then(res => res.json())
 			.then((result) => {
 				let Items = [];
