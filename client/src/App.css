@@ -1,4 +1,4 @@
-.App {
+.App, .App-Test {
   background: transparent;
   min-height: 100vh;
   display: flex;
@@ -6,4 +6,8 @@
   align-items: center;
   text-align: center;
   color: white;
+}
+
+.App-Test {
+  background: #282c34;
 }
