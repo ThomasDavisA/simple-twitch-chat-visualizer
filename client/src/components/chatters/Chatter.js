@@ -44,7 +44,7 @@ export default class Chatter extends React.Component {
 			<div className="Chatter">
 				<NamePlate name={this.state.name} />
 				<Avatar id={this.state.name} />
-				<ChatBubble key={this.state.timeStamp} message={this.state.message} />
+				{this.state.message && <ChatBubble key={this.state.timeStamp} message={this.state.message} />}
 			</div>
 		)
 	}
