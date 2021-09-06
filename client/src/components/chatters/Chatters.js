@@ -4,6 +4,7 @@ import React from 'react'
 import './Chatters.css'
 
 const ENDPOINT = process.env.REACT_APP_ENDPOINT;
+const TEST_USERS = process.env.REACT_APP_TEST_USERS;
 
 export default class Chatters extends React.Component {
 	constructor(props) {
@@ -61,22 +62,36 @@ export default class Chatters extends React.Component {
 	}
 
 	Request() {
-		fetch(ENDPOINT + "api/users")
-			.then(res => res.json())
-			.then((result) => {
-				let Items = [];
-				for (const Item in result) {
-					Items[Item] = {
-						message: result[Item].userMessage,
-						timeStamp: result[Item].timeStamp
-					}
+		if (TEST_USERS) {
+			let result = {
+				"1": {},
+				"2": {},
+				"3": {}
+			};
+			this.parseUsers(result);
+		}
+		else {
+			fetch(ENDPOINT + "api/users")
+				.then(res => res.json())
+				.then((result) => {
+					this.parseUsers(result);
+				},
+				(error) => {
+					console.log("Error: " + error);
 				}
-				this.setState({Items: Items});
-			},
-			(error) => {
-				console.log("Error: " + error);
+			);
+		}
+	}
+
+	parseUsers(Result) {
+		let Items = [];
+		for (const Item in Result) {
+			Items[Item] = {
+				message: Result[Item].userMessage,
+				timeStamp: Result[Item].timeStamp
 			}
-		);
+		}
+		this.setState({Items: Items});
 	}
 
 	render() {
