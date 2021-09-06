@@ -4,7 +4,8 @@ import React from 'react'
 import './Chatters.css'
 
 const ENDPOINT = process.env.REACT_APP_ENDPOINT;
-const TEST_USERS = process.env.REACT_APP_TEST_USERS;
+const TEST_MESSAGES = process.env.REACT_APP_TEST_MESSAGES === "true";
+const TEST_USERS = process.env.REACT_APP_TEST_USERS === "true" || TEST_MESSAGES;
 
 export default class Chatters extends React.Component {
 	constructor(props) {
@@ -68,6 +69,15 @@ export default class Chatters extends React.Component {
 				"2": {},
 				"3": {}
 			};
+
+			if (TEST_MESSAGES) {
+				let Keys = Object.keys(result);
+				let Index = Math.floor(Math.random() * Keys.length);
+				let User = result[Keys[Index]];
+				User.timeStamp = Date.now();
+				User.userMessage = "This is a message at " + User.timeStamp;
+			}
+
 			this.parseUsers(result);
 		}
 		else {
