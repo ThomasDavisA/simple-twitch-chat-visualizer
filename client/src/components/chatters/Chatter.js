@@ -22,6 +22,7 @@ export default class Chatter extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			key: props.key,
 			name: props.name,
 			message: props.message,
 			timeStamp: 0
@@ -29,7 +30,7 @@ export default class Chatter extends React.Component {
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
-		if (this.state.name === prevProps.name) {
+		if (this.state.key === prevProps.key) {
 			if (this.state.timeStamp < prevProps.timeStamp) {
 				this.setState({
 					message: prevProps.message,

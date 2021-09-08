@@ -65,9 +65,9 @@ export default class Chatters extends React.Component {
 	Request() {
 		if (TEST_USERS) {
 			let result = {
-				"1": {},
-				"2": {},
-				"3": {}
+				"1": {userId: "1", displayName: "Chatter 1"},
+				"2": {userId: "2", displayName: "Chatter 2"},
+				"3": {userId: "3", displayName: "Chatter 3"}
 			};
 
 			if (TEST_MESSAGES) {
@@ -96,9 +96,11 @@ export default class Chatters extends React.Component {
 	parseUsers(Result) {
 		let Items = [];
 		for (const Item in Result) {
-			Items[Item] = {
-				message: Result[Item].userMessage,
-				timeStamp: Result[Item].timeStamp
+			let User = Result[Item];
+			Items[User.userId] = {
+				displayName: User.displayName,
+				message: User.userMessage,
+				timeStamp: User.timeStamp
 			}
 		}
 		this.setState({Items: Items});
@@ -109,7 +111,7 @@ export default class Chatters extends React.Component {
 		for (const Item in this.state.Items) {
 			if (!this.state.Removed.includes(Item)) {
 				let user = this.state.Items[Item]
-				Items.push(<li onContextMenu={this.contextMenu.bind(this, Item)}><Chatter name={Item} message={user.message} timeStamp={user.timeStamp}/></li>);
+				Items.push(<li key={Item} onContextMenu={this.contextMenu.bind(this, Item)}><Chatter key={Item} name={user.displayName} message={user.message} timeStamp={user.timeStamp}/></li>);
 			}
 		}
 		return (
