@@ -19,6 +19,7 @@ const client = new tmi.Client({
 });
 
 const userList = {};
+const userMessages = [];
 let twitchAccessToken = '';
 
 getTwitchToken().then((token) => {
@@ -26,6 +27,8 @@ getTwitchToken().then((token) => {
 })
 
 client.connect();
+
+//make sure to get the current room when you first start up 
 
 client.on('join', (channel, username, self) => {
 	if (self || username === 'streamlabs') return;
@@ -37,7 +40,7 @@ client.on('join', (channel, username, self) => {
 				const userStatus = {
 					userName: username,
 					displayName: res.display_name,
-					userMessage: `${res.display_name} has joined!`,
+					userMessage: `${res.display_name} has joined the den!`,
 					timeStamp: Date.now(),
 					userId: res.id,
 				}
@@ -58,7 +61,7 @@ client.on('message', (channel, tags, message, self) => {
 	if (tags.username === 'streamlabs' || tags.username === 'pretzelrocks') return;
 	
 	console.log(`${tags['display-name']}: ${message}`);
-	console.log(tags);
+	//console.log(tags);
 	const userStatus = {
 		userName: tags.username,
 		displayName: tags['display-name'],
@@ -70,11 +73,28 @@ client.on('message', (channel, tags, message, self) => {
 		timeStamp: tags['tmi-sent-ts']
 	}
 	userList[tags.username] = userStatus;
+
+	const messageToStore = {
+		userId: tags['user-id'],
+		message: message,
+		timeStamp: tags['tmi-sent-ts']
+	}
+
+	userMessages.push(messageToStore);
 });
+
+//add client.ban here
 
 app.get('/api/users', function (req, res) {
 	res.json(userList)
   })
+
+app.get('/api/users/messages', function (req, res) {
+	let sendMessages = JSON.parse(JSON.stringify(userMessages));
+	console.log(sendMessages)
+	userMessages.length = 0;
+	res.json(sendMessages)
+})
 
 app.use(function errorHandler(error, req, res, next) {
     let response
@@ -93,6 +113,6 @@ app.listen(PORT, () => {
 })
 
 //debug
-setInterval(() => {
-	console.log(userList);
-}, 10000);
+// setInterval(() => {
+// 	console.log(userList);
+// }, 10000);
