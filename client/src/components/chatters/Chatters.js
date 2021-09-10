@@ -4,6 +4,7 @@ import React from 'react'
 import './Chatters.css'
 
 const ENDPOINT = process.env.REACT_APP_ENDPOINT;
+const API_USERS = process.env.REACT_APP_API_USERS;
 const TEST_MESSAGES = process.env.REACT_APP_TEST_MESSAGES === "true";
 const TEST_USERS = process.env.REACT_APP_TEST_USERS === "true" || TEST_MESSAGES;
 
@@ -81,7 +82,7 @@ export default class Chatters extends React.Component {
 			this.parseUsers(result);
 		}
 		else {
-			fetch(ENDPOINT + "api/users")
+			fetch(ENDPOINT + API_USERS)
 				.then(res => res.json())
 				.then((result) => {
 					this.parseUsers(result);
