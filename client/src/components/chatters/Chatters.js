@@ -5,6 +5,7 @@ import './Chatters.css'
 
 const ENDPOINT = process.env.REACT_APP_ENDPOINT;
 const API_USERS = process.env.REACT_APP_API_USERS;
+const API_USERS_MESSAGES = process.env.REACT_APP_API_USERS_MESSAGES;
 const TEST_MESSAGES = process.env.REACT_APP_TEST_MESSAGES === "true";
 const TEST_USERS = process.env.REACT_APP_TEST_USERS === "true" || TEST_MESSAGES;
 
@@ -91,6 +92,16 @@ export default class Chatters extends React.Component {
 					console.log("Error: " + error);
 				}
 			);
+
+			fetch(ENDPOINT + API_USERS_MESSAGES)
+				.then(res => res.json())
+				.then((result) => {
+					this.parseMessages(result);
+				},
+				(error) => {
+					console.log("Error: " + error);
+				}
+			);
 		}
 	}
 
@@ -100,11 +111,33 @@ export default class Chatters extends React.Component {
 			let User = Result[Item];
 			Items[User.userId] = {
 				displayName: User.displayName,
-				message: User.userMessage,
-				timeStamp: User.timeStamp
+				messages: [],
+				timeStamp: 0
 			}
 		}
 		this.setState({Items: Items});
+	}
+
+	parseMessages(result) {
+		let items = this.state.Items;
+		for (const item of result) {
+			if (item.userId in items) {
+				let user = items[item.userId];
+
+				user.messages.push({
+					message: item.message,
+					timeStamp: item.timeStamp
+				});
+
+				user.timeStamp = item.timeStamp;
+			} else {
+				console.log("Received message from invalid user: " + item.userId);
+			}
+		}
+
+		this.setState({
+			Items: items
+		})
 	}
 
 	render() {
@@ -112,7 +145,7 @@ export default class Chatters extends React.Component {
 		for (const Item in this.state.Items) {
 			if (!this.state.Removed.includes(Item)) {
 				let user = this.state.Items[Item]
-				Items.push(<li key={Item} onContextMenu={this.contextMenu.bind(this, Item)}><Chatter key={Item} name={user.displayName} message={user.message} timeStamp={user.timeStamp}/></li>);
+				Items.push(<li key={Item} onContextMenu={this.contextMenu.bind(this, Item)}><Chatter key={Item} name={user.displayName} messages={user.messages} timeStamp={user.timeStamp}/></li>);
 			}
 		}
 		return (
