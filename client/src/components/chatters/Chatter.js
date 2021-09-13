@@ -2,6 +2,8 @@ import Avatar from '../avatar/Avatar'
 import React from 'react'
 import './Chatter.css'
 
+const MESSAGE_INTERVAL = Number(process.env.REACT_APP_MESSAGE_INTERVAL);
+
 function ChatBubble(props) {
 	return (
 		<div className="ChatBubble">
@@ -66,7 +68,7 @@ export default class Chatter extends React.Component {
 
 			// Always set a timer. This gives the previous message time to render if it is the last message
 			// in the queue.
-			let timerID = setTimeout(() => this.popMessage(), 2000);
+			let timerID = setTimeout(() => this.popMessage(), MESSAGE_INTERVAL);
 
 			this.setState({
 				messages: messages,
