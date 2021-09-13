@@ -55,6 +55,11 @@ client.on('part', (channel, username, self) => {
 	delete userList[username];
 })
 
+client.on("ban", (channel, username, reason, userstate) => {
+    console.log(`${username} has been banned from the den! ${channel}`)
+	delete userList[username];
+});
+
 client.on('message', (channel, tags, message, self) => {
 	//ignore commands for now
 	if (self || message.startsWith('!')) return;
@@ -82,8 +87,6 @@ client.on('message', (channel, tags, message, self) => {
 
 	userMessages.push(messageToStore);
 });
-
-//add client.ban here
 
 app.get('/api/users', function (req, res) {
 	res.json(userList)
