@@ -71,16 +71,31 @@ export default class Chatters extends React.Component {
 				"2": {userId: "2", displayName: "Chatter 2"},
 				"3": {userId: "3", displayName: "Chatter 3"}
 			};
+			
+			this.parseUsers(result);
 
 			if (TEST_MESSAGES) {
-				let Keys = Object.keys(result);
-				let Index = Math.floor(Math.random() * Keys.length);
-				let User = result[Keys[Index]];
-				User.timeStamp = Date.now();
-				User.userMessage = "This is a message at " + User.timeStamp;
-			}
+				let count = Math.max(Math.floor(Math.random() * 5), 1);
+				let keys = Object.keys(result);
+				let timeStamp = Date.now();
 
-			this.parseUsers(result);
+				result = [];
+				for (let I = 0; I < count; I++) {
+					let index = Math.floor(Math.random() * keys.length);
+					let userId = keys[index];
+					let message = "This is a message at " + timeStamp;
+
+					result.push({
+						userId: userId,
+						message: message,
+						timeStamp: timeStamp
+					});
+
+					timeStamp += 10;
+				}
+
+				this.parseMessages(result);
+			}
 		}
 		else {
 			fetch(ENDPOINT + API_USERS)
