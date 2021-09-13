@@ -67,13 +67,38 @@ client.on('message', (channel, tags, message, self) => {
 	
 	console.log(`${tags['display-name']}: ${message}`);
 	//console.log(tags);
+	let messageToSend = message;
+	let emoteOnlyMessage = false;
+	const emotesList = [];
+	if (tags.emotes) {
+		const emoteSize = `3.0`;
+		if(tags['emote-only']) {
+			emoteOnlyMessage = true;
+		}
+		Object.entries(tags.emotes).forEach(
+			([key, value]) => {
+				
+				const stringToCut = value[0].split('-')
+				const emoteString = message.substr(stringToCut[0], stringToCut[1] - stringToCut[0] + 1);
+
+				const currentEmote = {
+					emoteId: key,
+					emoteCounted: value.length,
+					emoteString,
+					emoteURL: `http://static-cdn.jtvnw.net/emoticons/v1/${key}/${emoteSize}`
+				}
+
+				emotesList.push(currentEmote);
+			})
+	}
+
 	const userStatus = {
 		userName: tags.username,
 		displayName: tags['display-name'],
 		userSubBadge: tags['badge-info'],
 		isUserSubbed: tags.subscriber,
 		userColor: tags.color,
-		userMessage: message,
+		userMessage: messageToSend,
 		userId: tags['user-id'],
 		timeStamp: tags['tmi-sent-ts']
 	}
@@ -81,10 +106,12 @@ client.on('message', (channel, tags, message, self) => {
 
 	const messageToStore = {
 		userId: tags['user-id'],
-		message: message,
+		message: messageToSend,
+		emotes: emotesList ?? null,
+		emoteOnlyMessage,
 		timeStamp: tags['tmi-sent-ts']
 	}
-
+	console.log(messageToStore);
 	userMessages.push(messageToStore);
 });
 
