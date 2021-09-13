@@ -6,6 +6,7 @@ import './Chatters.css'
 const ENDPOINT = process.env.REACT_APP_ENDPOINT;
 const API_USERS = process.env.REACT_APP_API_USERS;
 const API_USERS_MESSAGES = process.env.REACT_APP_API_USERS_MESSAGES;
+const USERS_INTERVAL = Number(process.env.REACT_APP_USERS_INTERVAL);
 const TEST_MESSAGES = process.env.REACT_APP_TEST_MESSAGES === "true";
 const TEST_USERS = process.env.REACT_APP_TEST_USERS === "true" || TEST_MESSAGES;
 
@@ -25,7 +26,7 @@ export default class Chatters extends React.Component {
 	componentDidMount() {
 		this.TimerID = setInterval(
 			() => this.Request(),
-			3000
+			USERS_INTERVAL
 		);
 
 		document.addEventListener("click", this.onClick);
