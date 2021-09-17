@@ -37,11 +37,11 @@ client.on('join', (channel, username, self) => {
 		userList[username] = {};
 		getUserByUsername(username, twitchAccessToken)
 			.then(res => {
+				const isStreamer = username === channel.slice(1) ? true : false
 				const userStatus = {
 					userName: username,
 					displayName: res.display_name,
-					userMessage: `${res.display_name} has joined the den!`,
-					timeStamp: Date.now(),
+					isStreamer,
 					userId: res.id,
 				}
 				userList[username] = userStatus;
@@ -94,6 +94,7 @@ client.on('message', (channel, tags, message, self) => {
 
 	const userStatus = {
 		userName: tags.username,
+		isStreamer: tags.username === channel.slice(1) ? true : false,
 		displayName: tags['display-name'],
 		userSubBadge: tags['badge-info'],
 		isUserSubbed: tags.subscriber,
@@ -109,6 +110,7 @@ client.on('message', (channel, tags, message, self) => {
 		message: messageToSend,
 		emotes: emotesList ?? null,
 		emoteOnlyMessage,
+		message,
 		timeStamp: tags['tmi-sent-ts']
 	}
 	console.log(messageToStore);
