@@ -72,7 +72,7 @@ export default class Chatter extends React.Component {
 
 			this.setState({
 				messages: messages,
-				currentMessage: item,
+				currentMessage: this.parseMessage(item),
 				timerID: timerID
 			});
 		} else {
@@ -80,6 +80,56 @@ export default class Chatter extends React.Component {
 				timerID: null
 			})
 		}
+	}
+
+	parseMessage(message) {
+		let result = null;
+
+		if (!message) {
+			return result;
+		}
+
+		let contents = message.message;
+
+		if (message.emotes.length > 0) {
+			contents = [];
+			let index = 0;
+			while (index < message.message.length) {
+				let nextEmoteString = "";
+				let nextEmoteURL = "";
+				let nextEmoteIndex = -1;
+				for (let item of message.emotes) {
+					let possible = message.message.indexOf(item.emoteString, index);
+					if (possible !== -1) {
+						if (nextEmoteIndex === -1 || possible < nextEmoteIndex) {
+							nextEmoteString = item.emoteString;
+							nextEmoteURL = item.emoteURL;
+							nextEmoteIndex = possible;
+						}
+						
+					}
+				}
+
+				if (nextEmoteIndex !== -1) {
+					let sub = message.message.substr(index, nextEmoteIndex - index);
+					contents.push(sub);
+					index = nextEmoteIndex + nextEmoteString.length;
+
+					contents.push(<img key={nextEmoteString + String(nextEmoteIndex)} src={nextEmoteURL} alt={nextEmoteString} />);
+				} else {
+					let sub = message.message.substr(index, message.message.length - index);
+					contents.push(sub);
+					index = message.message.length;
+				}
+			}
+		}
+
+		result = {
+			message: contents,
+			timeStamp: message.timeStamp
+		};
+
+		return result;
 	}
 
 	render() {

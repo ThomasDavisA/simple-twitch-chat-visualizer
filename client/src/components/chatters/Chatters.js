@@ -7,7 +7,9 @@ const ENDPOINT = process.env.REACT_APP_ENDPOINT;
 const API_USERS = process.env.REACT_APP_API_USERS;
 const API_USERS_MESSAGES = process.env.REACT_APP_API_USERS_MESSAGES;
 const USERS_INTERVAL = Number(process.env.REACT_APP_USERS_INTERVAL);
-const TEST_MESSAGES = process.env.REACT_APP_TEST_MESSAGES === "true";
+
+const TEST_EMOTES = process.env.REACT_APP_TEST_EMOTES === "true";
+const TEST_MESSAGES = process.env.REACT_APP_TEST_MESSAGES === "true" || TEST_EMOTES;
 const TEST_USERS = process.env.REACT_APP_TEST_USERS === "true" || TEST_MESSAGES;
 
 export default class Chatters extends React.Component {
@@ -85,11 +87,43 @@ export default class Chatters extends React.Component {
 					let index = Math.floor(Math.random() * keys.length);
 					let userId = keys[index];
 					let message = "This is a message at " + timeStamp;
+					let emotes = [];
+					let emoteOnly = false;
+					
+					if (TEST_EMOTES) {
+						// Below are some test emotes pulled from data sent by the server. This should be updated if the format changes.
+						const testEmotes = [
+							{"emoteId":"25","emoteCounted":1,"emoteString":"Kappa","emoteURL":"http://static-cdn.jtvnw.net/emoticons/v1/25/1.0"},
+							{"emoteId":"30259","emoteCounted":1,"emoteString":"HeyGuys","emoteURL":"http://static-cdn.jtvnw.net/emoticons/v1/30259/1.0"}
+						];
+
+						let num = Math.max(Math.floor(Math.random() * 3), 1);
+						message += " with emotes ";
+						for (let J = 0; J < num; J++) {
+							let emoteIndex = Math.floor(Math.random() * testEmotes.length);
+							let emote = testEmotes[emoteIndex];
+							message += " " + emote.emoteString;
+
+							let found = false;
+							for (let item of emotes) {
+								if (item.emoteId === emote.emoteId) {
+									found = true;
+									break;
+								}
+							}
+
+							if (!found) {
+								emotes.push(emote);
+							}
+						}
+					}
 
 					result.push({
 						userId: userId,
 						message: message,
-						timeStamp: timeStamp
+						timeStamp: timeStamp,
+						emotes: emotes,
+						emoteOnly: emoteOnly
 					});
 
 					timeStamp += 10;
@@ -142,7 +176,9 @@ export default class Chatters extends React.Component {
 
 				user.messages.push({
 					message: item.message,
-					timeStamp: item.timeStamp
+					timeStamp: item.timeStamp,
+					emotes: item.emotes,
+					emoteOnly: item.emoteOnly
 				});
 
 				user.timeStamp = item.timeStamp;
