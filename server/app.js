@@ -71,7 +71,7 @@ client.on('message', (channel, tags, message, self) => {
 	let emoteOnlyMessage = false;
 	const emotesList = [];
 	if (tags.emotes) {
-		const emoteSize = `3.0`;
+		const emoteSize = `1.0`;
 		if(tags['emote-only']) {
 			emoteOnlyMessage = true;
 		}
