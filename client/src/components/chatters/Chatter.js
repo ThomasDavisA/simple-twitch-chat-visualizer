@@ -27,6 +27,7 @@ export default class Chatter extends React.Component {
 			key: props.key,
 			name: props.name,
 			messages: props.messages,
+			isStreamer: props.isStreamer,
 			timeStamp: 0,
 			currentMessage: null,
 			timerID: null
@@ -136,7 +137,7 @@ export default class Chatter extends React.Component {
 		return (
 			<div className="Chatter">
 				<NamePlate name={this.state.name} />
-				<Avatar id={this.state.name} />
+				<Avatar id={this.state.name} isStreamer={this.state.isStreamer} />
 				{this.state.currentMessage && <ChatBubble key={this.state.currentMessage.timeStamp} message={this.state.currentMessage.message} />}
 			</div>
 		)
