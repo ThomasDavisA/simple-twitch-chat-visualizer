@@ -197,7 +197,11 @@ export default class Chatters extends React.Component {
 		for (const Item in this.state.Items) {
 			if (!this.state.Removed.includes(Item)) {
 				let user = this.state.Items[Item]
-				Items.push(<li key={Item} onContextMenu={this.contextMenu.bind(this, Item)}><Chatter key={Item} name={user.displayName} messages={user.messages} timeStamp={user.timeStamp}/></li>);
+				if (user.isStreamer) {
+					Items.push(<li key={Item}><Chatter key={Item} isStreamer='true' name={user.displayName} messages={user.messages} timeStamp={user.timeStamp}/></li>);
+				} else {
+					Items.push(<li key={Item} onContextMenu={this.contextMenu.bind(this, Item)}><Chatter key={Item} name={user.displayName} messages={user.messages} timeStamp={user.timeStamp}/></li>);
+				}
 			}
 		}
 		return (
