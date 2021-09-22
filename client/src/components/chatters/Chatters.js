@@ -161,6 +161,7 @@ export default class Chatters extends React.Component {
 			let User = Result[Item];
 			Items[User.userId] = {
 				displayName: User.displayName,
+				isStreamer: User.isStreamer,
 				messages: [],
 				timeStamp: 0
 			}
@@ -200,7 +201,7 @@ export default class Chatters extends React.Component {
 				if (user.isStreamer) {
 					Items.push(<li key={Item}><Chatter key={Item} isStreamer='true' name={user.displayName} messages={user.messages} timeStamp={user.timeStamp}/></li>);
 				} else {
-					Items.push(<li key={Item} onContextMenu={this.contextMenu.bind(this, Item)}><Chatter key={Item} name={user.displayName} messages={user.messages} timeStamp={user.timeStamp}/></li>);
+					Items.push(<li key={Item} onContextMenu={this.contextMenu.bind(this, Item)}><Chatter key={Item} name={user.displayName} isStreamer='false' messages={user.messages} timeStamp={user.timeStamp}/></li>);
 				}
 			}
 		}
