@@ -11,3 +11,10 @@
 	object-fit: contain;
 	z-index: 1;
 }
+
+.Dragon {
+	position: relative;
+	width: 100%;
+	max-width: 200px;
+	z-index: 1;
+}

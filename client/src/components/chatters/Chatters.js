@@ -72,7 +72,10 @@ export default class Chatters extends React.Component {
 			let result = {
 				"1": {userId: "1", displayName: "Chatter 1"},
 				"2": {userId: "2", displayName: "Chatter 2"},
-				"3": {userId: "3", displayName: "Chatter 3"}
+				"3": {userId: "3", displayName: "Chatter 3"},
+				"4": {userId: "4", displayName: "Chatter 4 (streamer)", isStreamer: true},
+				"5": {userId: "5", displayName: "Chatter 5"},
+				"6": {userId: "6", displayName: "Chatter 6"},
 			};
 			
 			this.parseUsers(result);
@@ -198,11 +201,7 @@ export default class Chatters extends React.Component {
 		for (const Item in this.state.Items) {
 			if (!this.state.Removed.includes(Item)) {
 				let user = this.state.Items[Item]
-				if (user.isStreamer) {
-					Items.push(<li key={Item}><Chatter key={Item} isStreamer='true' name={user.displayName} messages={user.messages} timeStamp={user.timeStamp}/></li>);
-				} else {
-					Items.push(<li key={Item} onContextMenu={this.contextMenu.bind(this, Item)}><Chatter key={Item} name={user.displayName} isStreamer='false' messages={user.messages} timeStamp={user.timeStamp}/></li>);
-				}
+					Items.push(<li key={Item} onContextMenu={this.contextMenu.bind(this, Item)}><Chatter key={Item} name={user.displayName} isStreamer={user.isStreamer} messages={user.messages} timeStamp={user.timeStamp}/></li>);
 			}
 		}
 		return (
