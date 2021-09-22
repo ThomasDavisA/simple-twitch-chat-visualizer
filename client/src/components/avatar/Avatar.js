@@ -33,10 +33,7 @@ export default class Avatar extends react.Component {
 		let avatar = '';
 
 		if (this.props.isStreamer) {
-			console.log('isStreamer found!')
-			console.log(imgDragon);
 			dragon = imgDragon[0];
-			console.log('dragon is ', dragon);
 		}
 
 		if (!(ID in IDs)) {
@@ -59,12 +56,9 @@ export default class Avatar extends react.Component {
 			avatar = dragon
 		}
 
-		console.log(this.props);
-		console.log('dragon', dragon);
-		console.log(avatar);
 		return (
 			<div>
-				<Part className="Avatar" element={avatar} />
+				<Part className={dragon ? "Dragon" : "Avatar"} element={avatar} />
 				{/* <Part className="Avatar-Row-Child" element={torso} />
 				<Part className="Avatar-Row-Child" element={legs} /> */}
 			</div>
