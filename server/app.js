@@ -67,7 +67,6 @@ client.on('message', (channel, tags, message, self) => {
 	
 	console.log(`${tags['display-name']}: ${message}`);
 	//console.log(tags);
-	let messageToSend = message;
 	let emoteOnlyMessage = false;
 	const emotesList = [];
 	if (tags.emotes) {
@@ -99,7 +98,6 @@ client.on('message', (channel, tags, message, self) => {
 		userSubBadge: tags['badge-info'],
 		isUserSubbed: tags.subscriber,
 		userColor: tags.color,
-		userMessage: messageToSend,
 		userId: tags['user-id'],
 		timeStamp: tags['tmi-sent-ts']
 	}
@@ -107,7 +105,6 @@ client.on('message', (channel, tags, message, self) => {
 
 	const messageToStore = {
 		userId: tags['user-id'],
-		message: messageToSend,
 		emotes: emotesList ?? null,
 		emoteOnlyMessage,
 		message,

@@ -11,7 +11,7 @@ const imgLegs = importAll(require.context('../../images/legs'));
 const imgKobold = importAll(require.context('../../images/kobold'));
 const imgDragon = importAll(require.context('../../images/dragon'));
 
-var IDs = {}
+let IDs = {}
 
 function getRandomElement(Elements) {
 	let Index = Math.floor(Math.random() * Elements.length);
@@ -27,17 +27,24 @@ function Part(props) {
 }
 
 export default class Avatar extends react.Component {
-	render() {
-		let ID = this.props.id
-		let dragon = '';
-		let avatar = '';
+	constructor(props) {
+		super(props);
+		this.state = {
+			avatarID: props.id,
+			isStreamer: props.isStreamer
+		};
+	}
 
-		if (this.props.isStreamer) {
+	render() {
+		let { avatarID, isStreamer } = this.state;
+		let dragon, avatar = '';
+
+		if (isStreamer) {
 			dragon = imgDragon[0];
 		}
 
-		if (!(ID in IDs)) {
-			IDs[ID] = {
+		if (!(avatarID in IDs)) {
+			IDs[avatarID] = {
 				head: getRandomElement(imgHeads),
 				torso: getRandomElement(imgTorsos),
 				legs: getRandomElement(imgLegs),
@@ -49,12 +56,7 @@ export default class Avatar extends react.Component {
 		//let torso = IDs[ID].torso
 		//let legs = IDs[ID].legs
 
-		if (!dragon) {
-			avatar = IDs[ID].kobold
-		}
-		else {
-			avatar = dragon
-		}
+		avatar = !dragon ? IDs[avatarID].kobold : dragon;
 
 		return (
 			<div>
