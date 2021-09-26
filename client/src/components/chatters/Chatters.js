@@ -1,3 +1,4 @@
+import {ChattersContext} from '../../contexts/ChattersContext'
 import ChattersContextMenu from './ChattersContextMenu'
 import Chatter from './Chatter'
 import React from 'react'
@@ -205,15 +206,17 @@ export default class Chatters extends React.Component {
 			}
 		}
 		return (
-		<div>
-			<h2>Chatters</h2>
-			<ul className="Chatters"> {
-				Items
-			}
-			</ul> {
-				this.state.contextMenuTarget && <ChattersContextMenu onItemSelected={(id) => this.onContextMenuSelection(id)} xPos={this.state.xPos} yPos={this.state.yPos}/>
-			}
-		</div>
+		<ChattersContext.Provider value={{Items: this.state.Items}}>
+			<div>
+				<h2>Chatters</h2>
+				<ul className="Chatters"> {
+					Items
+				}
+				</ul> {
+					this.state.contextMenuTarget && <ChattersContextMenu onItemSelected={(id) => this.onContextMenuSelection(id)} xPos={this.state.xPos} yPos={this.state.yPos}/>
+				}
+			</div>
+		</ChattersContext.Provider>
 		);
 	}
 }
