@@ -1,4 +1,5 @@
 import Avatar from '../avatar/Avatar'
+import { ChattersContext } from '../../contexts/ChattersContext';
 import React from 'react'
 import './Chatter.css'
 
@@ -21,65 +22,34 @@ function NamePlate(props) {
 }
 
 export default class Chatter extends React.Component {
+	static contextType = ChattersContext;
+
 	constructor(props) {
 		super(props);
 		this.state = {
-			key: props.key,
-			name: props.name,
-			messages: props.messages,
-			isStreamer: props.isStreamer,
-			timeStamp: 0,
+			id: props.id,
 			currentMessage: null,
 			timerID: null
 		};
-	}
-
-	componentDidMount() {
-		// The component could have been mounted with valid messages passed into the component.
-		// Just kick off a timer here to begin the normal message processing.
-		setTimeout(() => this.popMessage(), 100);
-	}
-
-	componentDidUpdate(prevProps, prevState, snapshot) {
-		if (this.state.key === prevProps.key) {
-			if (this.state.timeStamp < prevProps.timeStamp) {
-				let messages = this.state.messages.concat(prevProps.messages);
-				
-				let timerID = null;
-				if (this.state.timerID == null) {
-					// Set a small timeout to call the popMessage function to give the component time to
-					// propagate the updated data to the state.
-					timerID = setTimeout(() => this.popMessage(), 100);
-				}
-
-				this.setState({
-					messages: messages,
-					timeStamp: prevProps.timeStamp,
-					timerID: timerID
-				});
-			}
-		}
+		this.messages = [];
 	}
 
 	popMessage() {
-		let messages = this.state.messages;
-
-		if (messages.length > 0) {
-			let item = messages.shift();
+		if (this.messages.length > 0) {
+			let item = this.messages.shift();
 
 			// Always set a timer. This gives the previous message time to render if it is the last message
 			// in the queue.
 			let timerID = setTimeout(() => this.popMessage(), MESSAGE_INTERVAL);
 
 			this.setState({
-				messages: messages,
 				currentMessage: this.parseMessage(item),
 				timerID: timerID
 			});
 		} else {
 			this.setState({
 				timerID: null
-			})
+			});
 		}
 	}
 
@@ -134,10 +104,24 @@ export default class Chatter extends React.Component {
 	}
 
 	render() {
+		let user = this.context.Items[this.state.id];
+		if (!user) {
+			return (<div />)
+		}
+
+		if (user.messages.length > 0) {
+			this.messages = this.messages.concat(user.messages);
+			user.messages.length = 0;
+
+			if (!this.state.timerID) {
+				this.popMessage();
+			}
+		}
+
 		return (
 			<div className="Chatter">
-				<NamePlate name={this.state.name} />
-				<Avatar id={this.state.name} isStreamer={this.state.isStreamer} />
+				<NamePlate name={user.displayName} />
+				<Avatar id={user.displayName} isStreamer={user.isStreamer} />
 				{this.state.currentMessage && <ChatBubble key={this.state.currentMessage.timeStamp} message={this.state.currentMessage.message} />}
 			</div>
 		)
