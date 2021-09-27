@@ -201,22 +201,21 @@ export default class Chatters extends React.Component {
 		let Items = [];
 		for (const Item in this.state.Items) {
 			if (!this.state.Removed.includes(Item)) {
-				let user = this.state.Items[Item]
-					Items.push(<li key={Item} onContextMenu={this.contextMenu.bind(this, Item)}><Chatter key={Item} name={user.displayName} isStreamer={user.isStreamer} messages={user.messages} timeStamp={user.timeStamp}/></li>);
+				Items.push(<li key={Item} onContextMenu={this.contextMenu.bind(this, Item)}><Chatter key={Item} id={Item}/></li>);
 			}
 		}
 		return (
-		<ChattersContext.Provider value={{Items: this.state.Items}}>
-			<div>
-				<h2>Chatters</h2>
-				<ul className="Chatters"> {
-					Items
-				}
-				</ul> {
-					this.state.contextMenuTarget && <ChattersContextMenu onItemSelected={(id) => this.onContextMenuSelection(id)} xPos={this.state.xPos} yPos={this.state.yPos}/>
-				}
-			</div>
-		</ChattersContext.Provider>
+			<ChattersContext.Provider value={{Items: this.state.Items}}>
+				<div>
+					<h2>Chatters</h2>
+					<ul className="Chatters"> {
+						Items
+					}
+					</ul> {
+						this.state.contextMenuTarget && <ChattersContextMenu onItemSelected={(id) => this.onContextMenuSelection(id)} xPos={this.state.xPos} yPos={this.state.yPos}/>
+					}
+				</div>
+			</ChattersContext.Provider>
 		);
 	}
 }
