@@ -1,0 +1,12 @@
+{
+    "name": "pixi-client-chat-visualizer",
+    "version": "1.0.0",
+    "description": "Pixi Client Chat Visualizer",
+    "main": "app.js",
+    "author": "Thomas Davis",
+    "license": "ISC",
+    "dependencies": {
+        "express": "^4.17.1",
+        "pixi.js": "^6.1.3"
+    }
+}
