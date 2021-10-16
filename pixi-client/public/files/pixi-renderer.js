@@ -1,3 +1,9 @@
+import { fetcher } from './fetcher.js';
+
+fetcher((data) => {
+	// TODO: In-memory storage.
+});
+
 const app = new PIXI.Application({ width: 360, height: 480 });
 document.body.appendChild(app.view);
 
