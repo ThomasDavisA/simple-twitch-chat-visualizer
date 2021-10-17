@@ -4,6 +4,7 @@ const API_USERS_MESSAGES = "api/users/messages";
 
 // Debug flags for testing.
 const TEST_USERS = false;
+const TEST_USERS_RANDOM = false;
 const TEST_MESSAGES = false;
 const TEST_EMOTES = false;
 
@@ -16,6 +17,18 @@ function fetchTestUsers() {
 		"5": {userId: "5", displayName: "Chatter 5"},
 		"6": {userId: "6", displayName: "Chatter 6"},
 	};
+
+	if (TEST_USERS_RANDOM) {
+		let keys = Object.keys(result);
+		let numToRemove = Math.floor(Math.random() * keys.length);
+
+		for (let I = 0; I < numToRemove; I++) {
+			let index = Math.floor(Math.random() * keys.length);
+			let key = keys[index];
+			delete result[key];
+			keys.splice(index, 1);
+		}
+	}
 
 	return result;
 }
