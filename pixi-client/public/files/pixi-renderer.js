@@ -1,7 +1,12 @@
 import { fetcher } from './fetcher.js';
+import { fetchstore, FS_EVENTS } from './fetch-store.js';
 
 fetcher((data) => {
-	// TODO: In-memory storage.
+	fetchstore(data, (event, data) => {
+		if (event == FS_EVENTS.ADD_USER) {
+		} else if (event == FS_EVENTS.REMOVE_USER) {
+		}
+	});
 });
 
 const app = new PIXI.Application({ width: 360, height: 480 });
