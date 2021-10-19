@@ -51,11 +51,15 @@ function setup() {
     koboldList.forEach(kobold => {
         const koboldSprite = new Sprite(Resources['files/sprites/kobold/Kobold_001.png'].texture);
         koboldSprite.x = kobold.posx;
+        kobold.destinationX = kobold.posx;
         koboldSprite.y = kobold.posy;
+        kobold.destinationY = kobold.posy;
         koboldSprite.scale.x = .25;
         koboldSprite.scale.y = .25;
         kobold.wanderTick = 0;
         kobold.koboldSprite = koboldSprite;
+
+        koboldSprite.anchor.set(0.5);
 
         kobolds.push(kobold);
     
@@ -72,8 +76,20 @@ function gameLoop(delta) {
         const { wanderTick, koboldSprite } = kobold;
         kobold.wanderTick--;
         if (wanderTick < 0) {
-            koboldSprite.x = Math.floor(Math.random() * 300);
+            //set new point to go to
+            kobold.destinationX = koboldSprite.x + Math.floor((Math.random() * 61) - 30);
             kobold.wanderTick = 60;
+        }
+
+        if (koboldSprite.x != kobold.destinationX) {
+            if (kobold.destinationX >= koboldSprite.x) {
+                kobold.vx = 1;
+                koboldSprite.scale.x = .25;
+            } else {
+                kobold.vx = -1;
+                koboldSprite.scale.x = -.25;
+            }
+            koboldSprite.x += kobold.vx;
         }
     })
 
