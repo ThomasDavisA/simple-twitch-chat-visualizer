@@ -15,6 +15,7 @@ const TextureCache = PIXI.utils.TextureCache,
     Sprite = PIXI.Sprite;
 
 let kobolds = [];
+const wanderDistance = 100;
 
 const app = new PIXI.Application({ width: 360, height: 480 });
 document.body.appendChild(app.view);
@@ -34,17 +35,20 @@ function setup() {
         {
             name: 'test1',
             posx: 100,
-            posy: 100
+            posy: 100,
+            vSpeed: 1
         },
         {
             name: 'test2',
-            posx: 50,
-            posy: 100
+            posx: 200,
+            posy: 100,
+            vSpeed: 2
         },
         {
             name: 'test3',
-            posx: 25,
-            posy: 100
+            posx: 500,
+            posy: 100,
+            vSpeed: 3
         }
     ]
 
@@ -73,25 +77,33 @@ function setup() {
 
 function gameLoop(delta) {
     kobolds.forEach(kobold => {
-        const { wanderTick, koboldSprite } = kobold;
+        const { wanderTick, koboldSprite, vSpeed } = kobold;
         kobold.wanderTick--;
         if (wanderTick < 0) {
             //set new point to go to
-            kobold.destinationX = koboldSprite.x + Math.floor((Math.random() * 61) - 30);
+            kobold.destinationX = koboldSprite.x + Math.floor((Math.random() * (wanderDistance * 2) + 1) - wanderDistance);
+            if (kobold.destinationX - wanderDistance <= 0) kobold.destinationX = Math.abs(koboldSprite.width * koboldSprite.scale.x * 2);
+            if (kobold.destinationX + wanderDistance >= app.screen.width) kobold.destinationX = app.screen.width - (koboldSprite.width * koboldSprite.scale.x * 2) - 1;
+
             kobold.wanderTick = 60;
         }
 
         if (koboldSprite.x != kobold.destinationX) {
+            let vel = kobold.vSpeed;
+            let dist = Math.abs(koboldSprite.x - kobold.destinationX)
+            
+            if (kobold.vSpeed > dist) 
+                vel = dist;
+
             if (kobold.destinationX >= koboldSprite.x) {
-                kobold.vx = 1;
+                kobold.vx = vel;
                 koboldSprite.scale.x = .25;
             } else {
-                kobold.vx = -1;
+                kobold.vx = vel * -1;
                 koboldSprite.scale.x = -.25;
             }
             koboldSprite.x += kobold.vx;
         }
     })
-
     //console.log('gameloop ticked');
 }
