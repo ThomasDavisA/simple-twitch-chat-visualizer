@@ -1,21 +1,57 @@
 import { fetcher } from './fetcher.js';
 import { fetchstore, FS_EVENTS } from './fetch-store.js';
 
-fetcher((data) => {
-	fetchstore(data, (event, data) => {
-		if (event == FS_EVENTS.ADD_USER) {
-		} else if (event == FS_EVENTS.REMOVE_USER) {
-		}
-	});
-});
-
 const TextureCache = PIXI.utils.TextureCache,
     Loader = PIXI.Loader.shared,
     Resources = PIXI.Loader.shared.resources,
     Sprite = PIXI.Sprite;
 
 let kobolds = [];
+const USER_REFRESH_RATE = 60;
+let userRefreshTick = 0;
 const wanderDistance = 100;
+
+fetcher((data) => {
+	fetchstore(data, (event, data) => {
+		if (event == FS_EVENTS.ADD_USER) {
+			const newKobold = {
+				userId: data.userId,
+				name: data.displayName,
+				posx: 500,
+				posy: 100,
+				vSpeed: 2
+				
+			}
+
+			let koboldNumber = Math.floor(Math.random() * 3) + 1;
+        	const koboldSprite = new Sprite(Resources[`files/sprites/kobold/Kobold_00${koboldNumber}.png`].texture);
+			koboldSprite.x = newKobold.posx;
+			newKobold.destinationX = newKobold.posx;
+			koboldSprite.y = newKobold.posy;
+			newKobold.destinationY = newKobold.posy;
+			koboldSprite.scale.x = .25;
+			koboldSprite.scale.y = .25;
+			newKobold.wanderTick = 0;
+			newKobold.koboldSprite = koboldSprite;
+	
+			koboldSprite.anchor.set(0.5);
+
+			kobolds.push(newKobold);
+			app.stage.addChild(kobolds[kobolds.length - 1].koboldSprite);
+		} else if (event == FS_EVENTS.REMOVE_USER) {
+			const koboldToRemove = kobolds.find(kobold => kobold.userId === data.userId)
+			const index = kobolds.indexOf(koboldToRemove)
+
+			if (index !== -1) {
+				app.stage.removeChild(kobolds[index].koboldSprite);
+				kobolds.splice(index, 1);
+			} else {
+				console.log('index not found! Missing userId.')
+			}
+			
+		}
+	});
+});
 
 const app = new PIXI.Application({ width: 360, height: 480 });
 document.body.appendChild(app.view);
@@ -28,23 +64,28 @@ app.resizeTo = window;
 const koboldTexture = TextureCache['files/sprites/kobold/Kobold_001.png'];
 
 Loader.add('files/sprites/kobold/Kobold_001.png')
+	.add('files/sprites/kobold/Kobold_002.png')
+	.add('files/sprites/kobold/Kobold_003.png')
     .load(setup);
 
 function setup() {
     const koboldList = [
         {
+			userId: 80,
             name: 'test1',
             posx: 100,
             posy: 100,
             vSpeed: 1
         },
         {
+			userId: 81,
             name: 'test2',
             posx: 200,
             posy: 100,
             vSpeed: 2
         },
         {
+			userId: 82,
             name: 'test3',
             posx: 500,
             posy: 100,
@@ -53,7 +94,8 @@ function setup() {
     ]
 
     koboldList.forEach(kobold => {
-        const koboldSprite = new Sprite(Resources['files/sprites/kobold/Kobold_001.png'].texture);
+		let koboldNumber = Math.floor(Math.random() * 3) + 1;
+        const koboldSprite = new Sprite(Resources[`files/sprites/kobold/Kobold_00${koboldNumber}.png`].texture);
         koboldSprite.x = kobold.posx;
         kobold.destinationX = kobold.posx;
         koboldSprite.y = kobold.posy;
