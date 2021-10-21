@@ -88,20 +88,21 @@ function gameLoop(delta) {
             kobold.wanderTick = 60;
         }
 
-        if (koboldSprite.x != kobold.destinationX) {
-            let vel = kobold.vSpeed;
+        if (koboldSprite.x !== kobold.destinationX) {
+            let vel = kobold.vSpeed * delta;
             let dist = Math.abs(koboldSprite.x - kobold.destinationX)
-            
-            if (kobold.vSpeed > dist) 
-                vel = dist;
 
-            if (kobold.destinationX >= koboldSprite.x) {
-                kobold.vx = vel;
+			if (vel >= dist) 
+			vel = dist;
+
+            if (kobold.destinationX > koboldSprite.x) {
+                kobold.vx = vel; 
                 koboldSprite.scale.x = .25;
             } else {
                 kobold.vx = vel * -1;
                 koboldSprite.scale.x = -.25;
             }
+			
             koboldSprite.x += kobold.vx;
         }
     })
