@@ -14,6 +14,7 @@ function fetchstore(data, callback) {
 		}
 
 		users[user.userId] = {
+			userId: user.userId,
 			displayName: user.displayName,
 			isStreamer: user.isStreamer
 		};
