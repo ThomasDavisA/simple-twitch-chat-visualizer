@@ -1,5 +1,9 @@
 const koboldList = [];
-const WANDER_DISTANCE = 100;
+const WANDER_DISTANCE = 4,
+    SINE_AMP = 20,
+    SINE_LENGTH = .2,
+    HOP_DISTANCE = 35;
+    //35 is the distance for one 'hop', learn why this number is later
 
 
 const TextureCache = PIXI.utils.TextureCache,
@@ -13,8 +17,8 @@ function addNewKobold(data) {
         name: data.displayName,
         posx: 500,
         posy: 100,
-        vSpeed: 2
-        
+        vSpeed: 2,
+        moveTimer: 0
     }
 
     let koboldNumber = Math.floor(Math.random() * 3) + 1;
@@ -48,11 +52,11 @@ function removeKobold(data) {
 
 function updateKoboldPosition(width, height, delta) {
     koboldList.forEach(kobold => {
-    const { wanderTick, koboldSprite, vSpeed } = kobold;
+    const { wanderTick, koboldSprite, vSpeed, moveTimer } = kobold;
     kobold.wanderTick--;
     if (wanderTick < 0) {
-        //set new point to go to
-        kobold.destinationX = koboldSprite.x + Math.floor((Math.random() * (WANDER_DISTANCE * 2) + 1) - WANDER_DISTANCE);
+        //set new point to go to based on number of hops
+        kobold.destinationX = koboldSprite.x + (Math.floor((Math.random() * (WANDER_DISTANCE * 2) + 1) - WANDER_DISTANCE) * HOP_DISTANCE);
         if (kobold.destinationX - WANDER_DISTANCE <= 0) kobold.destinationX = Math.abs(koboldSprite.width * koboldSprite.scale.x * 2);
         if (kobold.destinationX + WANDER_DISTANCE >= width) kobold.destinationX = width - (koboldSprite.width * koboldSprite.scale.x * 2) - 1;
 
@@ -76,8 +80,19 @@ function updateKoboldPosition(width, height, delta) {
         
         koboldSprite.x += kobold.vx;
 
+
         kobold.chatBubble.update(delta, koboldSprite);
-    }})
+
+        kobold.moveTimer++;
+        koboldSprite.y = kobold.posy + (-1 * Math.abs(SINE_AMP * Math.sin(SINE_LENGTH * moveTimer * delta)));
+    }
+
+    if (koboldSprite.x == kobold.destinationX) {
+        kobold.moveTimer = 0;
+        koboldSprite.y = kobold.posy;
+    }
+
+    })
 }
 
 function addMessage(message) {
