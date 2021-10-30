@@ -1,6 +1,7 @@
 import { fetcher } from './fetcher.js';
 import { fetchstore, FS_EVENTS } from './fetch-store.js';
-import { addNewKobold, removeKobold, updateKoboldPosition } from './kobolds.js';
+import { addMessage, addNewKobold, removeKobold, updateKoboldPosition } from './kobolds.js';
+import { ChatBubble } from './chat-bubble.js';
 
 const TextureCache = PIXI.utils.TextureCache,
     Loader = PIXI.Loader.shared,
@@ -24,11 +25,17 @@ fetcher((data) => {
 		if (event == FS_EVENTS.ADD_USER) {
             const newUser = addNewKobold(data);
             app.stage.addChild(newUser.koboldSprite);
+            newUser.chatBubble = new ChatBubble(app.stage);
 		} else if (event == FS_EVENTS.REMOVE_USER) {
 			const userToRemove = removeKobold(data)
             app.stage.removeChild(userToRemove.koboldSprite);
+            userToRemove.chatBubble.remove(app.stage);
 		}
 	});
+
+    data.messages.forEach(message => {
+        addMessage(message);
+    });
 });
 
 const koboldTexture = TextureCache['files/sprites/kobold/Kobold_001.png'];

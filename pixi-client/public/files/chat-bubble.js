@@ -17,6 +17,10 @@ class ChatBubble {
 		parent.addChild(this.graphics);
 	}
 
+	remove(parent) {
+		parent.removeChild(this.graphics);
+	}
+
 	addMessage(message) {
 		if (message === null) {
 			return;
