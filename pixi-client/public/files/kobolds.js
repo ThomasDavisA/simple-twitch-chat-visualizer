@@ -75,7 +75,17 @@ function updateKoboldPosition(width, height, delta) {
         }
         
         koboldSprite.x += kobold.vx;
+
+        kobold.chatBubble.update(delta, koboldSprite);
     }})
 }
 
-export {addNewKobold, removeKobold, updateKoboldPosition};
+function addMessage(message) {
+    koboldList.forEach(kobold => {
+        if (kobold.userId === message.userId) {
+            kobold.chatBubble.addMessage(message);
+        }
+    });
+}
+
+export {addNewKobold, removeKobold, updateKoboldPosition, addMessage};
