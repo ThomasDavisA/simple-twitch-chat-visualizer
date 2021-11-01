@@ -42,7 +42,7 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher) {
     koboldSprite.scale.x = .25;
     koboldSprite.scale.y = .25;
     koboldSprite.anchor.set(0.5);
-    console.log(koboldSprite.x, koboldSprite.y)
+    //console.log(koboldSprite.x, koboldSprite.y)
     const koboldPlate = new PIXI.Container();
     koboldPlate.x = newKobold.posx;
     koboldPlate.y = newKobold.posy;
@@ -50,7 +50,7 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher) {
     koboldPlate.addChild(koboldName);
 
 
-    console.log(koboldSprite.getGlobalPosition().x, koboldSprite.y)
+    //console.log(koboldSprite.getGlobalPosition().x, koboldSprite.y)
 
     koboldName.position.set(koboldSprite.x - (koboldSprite.width / 4), koboldSprite.y + (koboldSprite.height / 2) - 5)
 
@@ -59,7 +59,7 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher) {
     newKobold.koboldSprite = koboldSprite;
     newKobold.koboldPlate = koboldPlate;
 
-    console.log(newKobold)
+    //console.log(newKobold)
 
     koboldList.push(newKobold);
     return newKobold;
@@ -77,7 +77,7 @@ function removeKobold(data) {
     }
 }
 
-function updateKoboldPosition(width, height, delta) {
+function updateKoboldPosition(width, heightMin, heightMax, delta) {
     koboldList.forEach(kobold => {
     const { wanderTick, koboldSprite, vSpeed, moveTimer, koboldPlate } = kobold;
     kobold.wanderTick--;
@@ -90,6 +90,14 @@ function updateKoboldPosition(width, height, delta) {
 
         kobold.destinationX = koboldDistance + koboldPlate.x;
         kobold.wanderTick = 60 + Math.floor(Math.random() * 180);
+
+        let koboldDistanceY = ((Math.floor(Math.random() * (heightMax + heightMin) + 1) - heightMin));
+        if (koboldDistance != 0)
+            kobold.vy = koboldDistance / (koboldDistanceY - koboldPlate.y) ;
+
+        kobold.destinationY = koboldDistanceY;
+
+        console.log(kobold.vy, kobold.destinationY, koboldDistance)
     }
 
     if (koboldPlate.x !== kobold.destinationX) {
@@ -109,10 +117,10 @@ function updateKoboldPosition(width, height, delta) {
         
 
         koboldPlate.x += kobold.vx;
-
+        koboldPlate.y += kobold.vy;
 
         kobold.chatBubble.update(delta, koboldSprite);
-
+        koboldPlate.zIndex = koboldPlate.y;
         kobold.moveTimer++;
         koboldSprite.y = (-1 * Math.abs(SINE_AMP * Math.sin(SINE_LENGTH * moveTimer * delta)));
     }

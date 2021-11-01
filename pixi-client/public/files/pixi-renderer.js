@@ -80,6 +80,6 @@ function setup() {
 }
 
 function gameLoop(delta) {
-    updateKoboldPosition(app.screen.width, app.screen.height, delta);
+    updateKoboldPosition(app.screen.width, Y_AXIS_LOWER_BOUND, Y_AXIS_UPPER_BOUND, delta);
     //console.log('gameloop ticked');
 }
