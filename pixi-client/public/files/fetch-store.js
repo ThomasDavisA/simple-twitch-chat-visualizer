@@ -24,7 +24,18 @@ function fetchstore(data, callback) {
 	let toRemove = [];
 	for (const key in users) {
 		let user = users[key];
-		if (!(key in data.users)) {
+
+		let found = false;
+		for (const dataKey in data.users) {
+			let dataUser = data.users[dataKey];
+
+			if (dataUser.userId == key) {
+				found = true;
+				break;
+			}
+		}
+
+		if (!found) {
 			callback(FS_EVENTS.REMOVE_USER, user);
 			toRemove.push(key);
 		}
