@@ -1,5 +1,7 @@
 const koboldList = [];
 const WANDER_DISTANCE = 3,
+    SINE_AMP = 20,
+    SINE_LENGTH = .2,
     HOP_DISTANCE = Math.PI * 10;
 
 
@@ -12,8 +14,8 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher) {
     const newKobold = {
         userId: data.userId,
         name: data.displayName,
-        posx: Math.floor(Math.random() * (yAxisHigher - yAxisLower + 1) + yAxisLower),
-        posy: Math.floor(Math.random() * (xAxisHigher - xAxisLower + 1) + xAxisLower),
+        posy: Math.floor(Math.random() * (yAxisHigher - yAxisLower + 1) + yAxisLower),
+        posx: Math.floor(Math.random() * (xAxisHigher - xAxisLower + 1) + xAxisLower),
         vSpeed: 2,
         moveTimer: 0,
         wanderTick: 0
@@ -25,6 +27,7 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher) {
 
     koboldSprite.scale.x = .25;
     koboldSprite.scale.y = .25;
+    koboldSprite.anchor.set(0.5);
 
     const koboldPlate = new PIXI.Container();
     koboldPlate.x = newKobold.posx;
@@ -53,6 +56,7 @@ function removeKobold(data) {
 function updateKoboldPosition(width, height, delta) {
     koboldList.forEach(kobold => {
     const { wanderTick, koboldSprite, vSpeed, moveTimer, koboldPlate, destinationX } = kobold;
+    let vel = vSpeed * delta;
     kobold.wanderTick--;
     if (wanderTick < 0) {
         //set new point to go to
@@ -66,7 +70,6 @@ function updateKoboldPosition(width, height, delta) {
     }
 
     if (koboldPlate.x !== kobold.destinationX) {
-        let vel = vSpeed * delta;
         let dist = Math.abs(koboldPlate.x - kobold.destinationX)
 
         if (vel >= dist) 
@@ -83,8 +86,15 @@ function updateKoboldPosition(width, height, delta) {
         koboldPlate.x += kobold.vx;
 
         kobold.moveTimer++;
+        koboldSprite.y = (-1 * Math.abs(SINE_AMP * Math.sin(SINE_LENGTH * moveTimer * delta)));
         kobold.chatBubble.update(delta, koboldSprite);
-    }})
+    }
+
+    if (koboldPlate.x == kobold.destinationX) {
+        kobold.moveTimer = 0;
+        koboldSprite.y = 0;
+    }
+})
 }
 
 function addMessage(message) {
