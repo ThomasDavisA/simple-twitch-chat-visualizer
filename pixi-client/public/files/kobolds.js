@@ -1,5 +1,6 @@
 const koboldList = [];
-const WANDER_DISTANCE = 100;
+const WANDER_DISTANCE = 3,
+    HOP_DISTANCE = Math.PI * 10;
 
 
 const TextureCache = PIXI.utils.TextureCache,
@@ -7,28 +8,31 @@ const TextureCache = PIXI.utils.TextureCache,
     Resources = PIXI.Loader.shared.resources,
     Sprite = PIXI.Sprite;
 
-function addNewKobold(data) {
+function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher) {
     const newKobold = {
         userId: data.userId,
         name: data.displayName,
-        posx: 500,
-        posy: 100,
-        vSpeed: 2
-        
+        posx: Math.floor(Math.random() * (yAxisHigher - yAxisLower + 1) + yAxisLower),
+        posy: Math.floor(Math.random() * (xAxisHigher - xAxisLower + 1) + xAxisLower),
+        vSpeed: 2,
+        moveTimer: 0,
+        wanderTick: 0
     }
 
+    //Inits Kobold Sprite
     let koboldNumber = Math.floor(Math.random() * 3) + 1;
     const koboldSprite = new Sprite(Resources[`files/sprites/kobold/Kobold_00${koboldNumber}.png`].texture);
-    koboldSprite.x = newKobold.posx;
-    newKobold.destinationX = newKobold.posx;
-    koboldSprite.y = newKobold.posy;
-    newKobold.destinationY = newKobold.posy;
+
     koboldSprite.scale.x = .25;
     koboldSprite.scale.y = .25;
-    newKobold.wanderTick = 0;
-    newKobold.koboldSprite = koboldSprite;
 
-    koboldSprite.anchor.set(0.5);
+    const koboldPlate = new PIXI.Container();
+    koboldPlate.x = newKobold.posx;
+    koboldPlate.y = newKobold.posy;
+    koboldPlate.addChild(koboldSprite);
+
+    newKobold.koboldPlate = koboldPlate;
+    newKobold.koboldSprite = koboldSprite;
 
     koboldList.push(newKobold);
     return newKobold;
@@ -48,25 +52,27 @@ function removeKobold(data) {
 
 function updateKoboldPosition(width, height, delta) {
     koboldList.forEach(kobold => {
-    const { wanderTick, koboldSprite, vSpeed } = kobold;
+    const { wanderTick, koboldSprite, vSpeed, moveTimer, koboldPlate, destinationX } = kobold;
     kobold.wanderTick--;
     if (wanderTick < 0) {
         //set new point to go to
-        kobold.destinationX = koboldSprite.x + Math.floor((Math.random() * (WANDER_DISTANCE * 2) + 1) - WANDER_DISTANCE);
-        if (kobold.destinationX - WANDER_DISTANCE <= 0) kobold.destinationX = Math.abs(koboldSprite.width * koboldSprite.scale.x * 2);
-        if (kobold.destinationX + WANDER_DISTANCE >= width) kobold.destinationX = width - (koboldSprite.width * koboldSprite.scale.x * 2) - 1;
+        let koboldDistance = ((Math.floor(Math.random() * ((WANDER_DISTANCE * 2) + 1)) - WANDER_DISTANCE) * HOP_DISTANCE);
+        if (((koboldDistance + koboldPlate.x + HOP_DISTANCE) >= width) || ((koboldDistance + koboldPlate.x - HOP_DISTANCE) <= 0)) {
+            koboldDistance = koboldDistance * -1;
+        }
 
-        kobold.wanderTick = 60;
+        kobold.destinationX = koboldDistance + koboldPlate.x;
+        kobold.wanderTick = 60 + Math.floor(Math.random() * 180);
     }
 
-    if (koboldSprite.x !== kobold.destinationX) {
-        let vel = kobold.vSpeed * delta;
-        let dist = Math.abs(koboldSprite.x - kobold.destinationX)
+    if (koboldPlate.x !== kobold.destinationX) {
+        let vel = vSpeed * delta;
+        let dist = Math.abs(koboldPlate.x - kobold.destinationX)
 
         if (vel >= dist) 
         vel = dist;
 
-        if (kobold.destinationX > koboldSprite.x) {
+        if (kobold.destinationX > koboldPlate.x) {
             kobold.vx = vel; 
             koboldSprite.scale.x = .25;
         } else {
@@ -74,8 +80,9 @@ function updateKoboldPosition(width, height, delta) {
             koboldSprite.scale.x = -.25;
         }
         
-        koboldSprite.x += kobold.vx;
+        koboldPlate.x += kobold.vx;
 
+        kobold.moveTimer++;
         kobold.chatBubble.update(delta, koboldSprite);
     }})
 }
