@@ -16,19 +16,20 @@ app.renderer.view.style.display = 'block';
 app.renderer.autoDensity = true;
 app.resizeTo = window;
 
-const USER_REFRESH_RATE = 60;
-const Y_AXIS_LOWER_BOUND = app.stage.height - 110;
-const Y_AXIS_UPPER_BOUND = app.stage.height - 10;
+const Y_AXIS_LOWER_BOUND = app.screen.height - 200;
+const Y_AXIS_UPPER_BOUND = app.screen.height - 80;
+const X_AXIS_UPPER_BOUND = app.screen.width - 100;
+const X_AXIS_LOWER_BOUND = 100;
 
 fetcher((data) => {
 	fetchstore(data, (event, data) => {
 		if (event == FS_EVENTS.ADD_USER) {
-            const newUser = addNewKobold(data);
-            app.stage.addChild(newUser.koboldSprite);
-            newUser.chatBubble = new ChatBubble(app.stage);
+            const newUser = addNewKobold(data, Y_AXIS_LOWER_BOUND, Y_AXIS_UPPER_BOUND, X_AXIS_LOWER_BOUND, X_AXIS_UPPER_BOUND);
+            app.stage.addChild(newUser.koboldPlate);
+            newUser.chatBubble = new ChatBubble(newUser.koboldPlate);
 		} else if (event == FS_EVENTS.REMOVE_USER) {
 			const userToRemove = removeKobold(data)
-            app.stage.removeChild(userToRemove.koboldSprite);
+            app.stage.removeChild(userToRemove.koboldPlate);
             userToRemove.chatBubble.remove(app.stage);
 		}
 	});
@@ -46,35 +47,6 @@ Loader.add('files/sprites/kobold/Kobold_001.png')
     .load(setup);
 
 function setup() {
-    const koboldList = [
-        {
-			userId: 80,
-            name: 'test1',
-            posx: 100,
-            posy: 100,
-            vSpeed: 1
-        },
-        {
-			userId: 81,
-            name: 'test2',
-            posx: 200,
-            posy: 100,
-            vSpeed: 2
-        },
-        {
-			userId: 82,
-            name: 'test3',
-            posx: 500,
-            posy: 100,
-            vSpeed: 3
-        }
-    ]
-
-    koboldList.forEach(user => {
-        const newUser = addNewKobold(user);
-        app.stage.addChild(newUser.koboldSprite);
-    })
-
     app.ticker.add((delta) => gameLoop(delta));
 }
 
