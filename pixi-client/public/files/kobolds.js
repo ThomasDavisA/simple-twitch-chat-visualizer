@@ -53,48 +53,74 @@ function removeKobold(data) {
     }
 }
 
-function updateKoboldPosition(width, height, delta) {
+function updateKoboldPosition(width, heightMax, heightMin, delta) {
     koboldList.forEach(kobold => {
-    const { wanderTick, koboldSprite, vSpeed, moveTimer, koboldPlate, destinationX } = kobold;
-    let vel = vSpeed * delta;
-    kobold.wanderTick--;
-    if (wanderTick < 0) {
-        //set new point to go to
-        let koboldDistance = ((Math.floor(Math.random() * ((WANDER_DISTANCE * 2) + 1)) - WANDER_DISTANCE) * HOP_DISTANCE);
-        if (((koboldDistance + koboldPlate.x + HOP_DISTANCE) >= width) || ((koboldDistance + koboldPlate.x - HOP_DISTANCE) <= 0)) {
-            koboldDistance = koboldDistance * -1;
-        }
+        const { wanderTick, koboldSprite, vSpeed, moveTimer, koboldPlate } = kobold;
+        let vel = 0;
+        let moveFlag = false;
 
-        kobold.destinationX = koboldDistance + koboldPlate.x;
-        kobold.wanderTick = 60 + Math.floor(Math.random() * 180);
-    }
-
-    if (koboldPlate.x !== kobold.destinationX) {
-        let dist = Math.abs(koboldPlate.x - kobold.destinationX)
-
-        if (vel >= dist) 
-        vel = dist;
-
-        if (kobold.destinationX > koboldPlate.x) {
-            kobold.vx = vel; 
-            koboldSprite.scale.x = .25;
-        } else {
-            kobold.vx = vel * -1;
-            koboldSprite.scale.x = -.25;
-        }
-        
-        koboldPlate.x += kobold.vx;
-
-        kobold.moveTimer++;
-        koboldSprite.y = (-1 * Math.abs(SINE_AMP * Math.sin(SINE_LENGTH * moveTimer * delta)));
+        kobold.wanderTick--;
         kobold.chatBubble.update(delta, koboldSprite);
-    }
 
-    if (koboldPlate.x == kobold.destinationX) {
-        kobold.moveTimer = 0;
-        koboldSprite.y = 0;
-    }
-})
+        if (wanderTick < 0) {
+            //set new point to go to
+            let koboldDistance = ((Math.floor(Math.random() * ((WANDER_DISTANCE * 2) + 1)) - WANDER_DISTANCE) * HOP_DISTANCE);
+            if (((koboldDistance + koboldPlate.x + HOP_DISTANCE) >= width) || ((koboldDistance + koboldPlate.x - HOP_DISTANCE) <= 0)) {
+                koboldDistance = koboldDistance * -1;
+            }
+
+            kobold.destinationY = ((Math.floor(Math.random() * (heightMax - heightMin) + 1) + heightMin));
+            kobold.destinationX = koboldDistance + koboldPlate.x;
+            kobold.wanderTick = 60 + Math.floor(Math.random() * 180);
+            //console.log(kobold.destinationY, endPointY, koboldPlate.y, koboldDistanceY)
+        }
+
+        if (koboldPlate.x !== kobold.destinationX) {
+            moveFlag = true;
+            vel = vSpeed * delta;
+
+            let dist = Math.abs(koboldPlate.x - kobold.destinationX)
+
+            if (vel >= dist) 
+            vel = dist;
+
+            if (kobold.destinationX > koboldPlate.x) {
+                kobold.vx = vel; 
+                koboldSprite.scale.x = .25;
+            } else {
+                kobold.vx = vel * -1;
+                koboldSprite.scale.x = -.25;
+            }
+            
+            koboldPlate.x += kobold.vx;
+        }
+
+        if (koboldPlate.y !== kobold.destinationY) {
+            moveFlag = true;
+            vel = vSpeed * delta;
+            let dist = Math.abs(koboldPlate.y - kobold.destinationY)
+
+            if (vel >= dist)
+            vel = dist
+
+            if (kobold.destinationY > koboldPlate.y) {
+                kobold.vy = vel; 
+            } else {
+                kobold.vy = vel * -1;
+            }
+            
+            koboldPlate.y += kobold.vy;
+            //console.log(koboldPlate.y, kobold.destinationY)
+        }
+
+        if (moveFlag) {
+            kobold.moveTimer++;
+            koboldSprite.y = (-1 * Math.abs(SINE_AMP * Math.sin(SINE_LENGTH * moveTimer * delta)));
+        } else {
+            kobold.moveTimer = 0;
+            koboldSprite.y = 0;
+        }
+    })
 }
 
 function addMessage(message) {
