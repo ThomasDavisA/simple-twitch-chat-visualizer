@@ -8,7 +8,7 @@ const TextureCache = PIXI.utils.TextureCache,
     Resources = PIXI.Loader.shared.resources,
     Sprite = PIXI.Sprite;
 
-const app = new PIXI.Application({ width: 360, height: 480 });
+const app = new PIXI.Application({ width: 360, height: 480, transparent: false });
 document.body.appendChild(app.view);
 
 app.renderer.view.style.position = 'absolute';
