@@ -4,6 +4,13 @@ const WANDER_DISTANCE = 3,
     SINE_LENGTH = .2,
     HOP_DISTANCE = Math.PI * 10;
 
+const nameStyle = new PIXI.TextStyle({
+    fontFamily: 'Arial',
+    fontSize: 16,
+    fill: 'white',
+    stroke: '#FFFFFF',
+    strokeThickness: 0
+})
 
 const TextureCache = PIXI.utils.TextureCache,
     Loader = PIXI.Loader.shared,
@@ -36,6 +43,11 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher) {
 
     newKobold.koboldPlate = koboldPlate;
     newKobold.koboldSprite = koboldSprite;
+
+    const koboldName = new PIXI.Text(newKobold.name, nameStyle);
+    koboldName.position.set(0, koboldSprite.y + (koboldSprite.height / 2));
+    koboldSprite.position.set((koboldName.width / 2), 0)
+    koboldPlate.addChild(koboldName);
 
     koboldList.push(newKobold);
     return newKobold;

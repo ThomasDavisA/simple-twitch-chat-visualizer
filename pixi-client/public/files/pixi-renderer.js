@@ -3,12 +3,15 @@ import { fetchstore, FS_EVENTS } from './fetch-store.js';
 import { addMessage, addNewKobold, removeKobold, updateKoboldPosition } from './kobolds.js';
 import { ChatBubble } from './chat-bubble.js';
 
+//Debug flag for testing.
+const TEST_DEBUG = false;
+
 const TextureCache = PIXI.utils.TextureCache,
     Loader = PIXI.Loader.shared,
     Resources = PIXI.Loader.shared.resources,
     Sprite = PIXI.Sprite;
 
-const app = new PIXI.Application({ width: 360, height: 480 });
+const app = new PIXI.Application({ width: 360, height: 480, transparent: !TEST_DEBUG });
 document.body.appendChild(app.view);
 
 app.renderer.view.style.position = 'absolute';
