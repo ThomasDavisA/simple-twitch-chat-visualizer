@@ -25,12 +25,20 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher) {
         posx: Math.floor(Math.random() * (xAxisHigher - xAxisLower + 1) + xAxisLower),
         vSpeed: 2,
         moveTimer: 0,
-        wanderTick: 0
+        wanderTick: 0,
+        isStreamer: data.isStreamer || false
     }
 
     //Inits Kobold Sprite
     let koboldNumber = Math.floor(Math.random() * 3) + 1;
-    const koboldSprite = new Sprite(Resources[`files/sprites/kobold/Kobold_00${koboldNumber}.png`].texture);
+    let koboldSprite = new Sprite(Resources[`files/sprites/kobold/Kobold_00${koboldNumber}.png`].texture);
+
+    //overwrite if it is the Streamer
+    if (data.isStreamer) {
+        newKobold.posx = 50;
+        newKobold.posy = ((yAxisHigher - yAxisLower) / 2) + yAxisLower;
+        koboldSprite = new Sprite(Resources[`files/sprites/dragon/dragon_kealldin.png`].texture);
+    }
 
     koboldSprite.scale.x = .25;
     koboldSprite.scale.y = .25;
@@ -67,70 +75,72 @@ function removeKobold(data) {
 
 function updateKoboldPosition(width, heightMax, heightMin, delta) {
     koboldList.forEach(kobold => {
-        const { wanderTick, koboldSprite, vSpeed, moveTimer, koboldPlate } = kobold;
-        let vel = 0;
-        let moveFlag = false;
+            if (!kobold.isStreamer) {
+            const { wanderTick, koboldSprite, vSpeed, moveTimer, koboldPlate } = kobold;
+            let vel = 0;
+            let moveFlag = false;
 
-        kobold.wanderTick--;
-        kobold.chatBubble.update(delta, koboldSprite);
+            kobold.wanderTick--;
+            kobold.chatBubble.update(delta, koboldSprite);
 
-        if (wanderTick < 0) {
-            //set new point to go to
-            let koboldDistance = ((Math.floor(Math.random() * ((WANDER_DISTANCE * 2) + 1)) - WANDER_DISTANCE) * HOP_DISTANCE);
-            if (((koboldDistance + koboldPlate.x + HOP_DISTANCE) >= width) || ((koboldDistance + koboldPlate.x - HOP_DISTANCE) <= 0)) {
-                koboldDistance = koboldDistance * -1;
+            if (wanderTick < 0) {
+                //set new point to go to
+                let koboldDistance = ((Math.floor(Math.random() * ((WANDER_DISTANCE * 2) + 1)) - WANDER_DISTANCE) * HOP_DISTANCE);
+                if (((koboldDistance + koboldPlate.x + HOP_DISTANCE) >= width) || ((koboldDistance + koboldPlate.x - HOP_DISTANCE) <= 0)) {
+                    koboldDistance = koboldDistance * -1;
+                }
+
+                kobold.destinationY = ((Math.floor(Math.random() * (heightMax - heightMin) + 1) + heightMin));
+                kobold.destinationX = koboldDistance + koboldPlate.x;
+                kobold.wanderTick = 60 + Math.floor(Math.random() * 180);
+                //console.log(kobold.destinationY, endPointY, koboldPlate.y, koboldDistanceY)
             }
 
-            kobold.destinationY = ((Math.floor(Math.random() * (heightMax - heightMin) + 1) + heightMin));
-            kobold.destinationX = koboldDistance + koboldPlate.x;
-            kobold.wanderTick = 60 + Math.floor(Math.random() * 180);
-            //console.log(kobold.destinationY, endPointY, koboldPlate.y, koboldDistanceY)
-        }
+            if (koboldPlate.x !== kobold.destinationX) {
+                moveFlag = true;
+                vel = vSpeed * delta;
 
-        if (koboldPlate.x !== kobold.destinationX) {
-            moveFlag = true;
-            vel = vSpeed * delta;
+                let dist = Math.abs(koboldPlate.x - kobold.destinationX)
 
-            let dist = Math.abs(koboldPlate.x - kobold.destinationX)
+                if (vel >= dist) 
+                vel = dist;
 
-            if (vel >= dist) 
-            vel = dist;
+                if (kobold.destinationX > koboldPlate.x) {
+                    kobold.vx = vel; 
+                    koboldSprite.scale.x = .25;
+                } else {
+                    kobold.vx = vel * -1;
+                    koboldSprite.scale.x = -.25;
+                }
+                
+                koboldPlate.x += kobold.vx;
+            }
 
-            if (kobold.destinationX > koboldPlate.x) {
-                kobold.vx = vel; 
-                koboldSprite.scale.x = .25;
+            if (koboldPlate.y !== kobold.destinationY) {
+                moveFlag = true;
+                vel = vSpeed * delta;
+                let dist = Math.abs(koboldPlate.y - kobold.destinationY)
+
+                if (vel >= dist)
+                vel = dist
+
+                if (kobold.destinationY > koboldPlate.y) {
+                    kobold.vy = vel; 
+                } else {
+                    kobold.vy = vel * -1;
+                }
+                
+                koboldPlate.y += kobold.vy;
+                //console.log(koboldPlate.y, kobold.destinationY)
+            }
+
+            if (moveFlag) {
+                kobold.moveTimer++;
+                koboldSprite.y = (-1 * Math.abs(SINE_AMP * Math.sin(SINE_LENGTH * moveTimer * delta)));
             } else {
-                kobold.vx = vel * -1;
-                koboldSprite.scale.x = -.25;
+                kobold.moveTimer = 0;
+                koboldSprite.y = 0;
             }
-            
-            koboldPlate.x += kobold.vx;
-        }
-
-        if (koboldPlate.y !== kobold.destinationY) {
-            moveFlag = true;
-            vel = vSpeed * delta;
-            let dist = Math.abs(koboldPlate.y - kobold.destinationY)
-
-            if (vel >= dist)
-            vel = dist
-
-            if (kobold.destinationY > koboldPlate.y) {
-                kobold.vy = vel; 
-            } else {
-                kobold.vy = vel * -1;
-            }
-            
-            koboldPlate.y += kobold.vy;
-            //console.log(koboldPlate.y, kobold.destinationY)
-        }
-
-        if (moveFlag) {
-            kobold.moveTimer++;
-            koboldSprite.y = (-1 * Math.abs(SINE_AMP * Math.sin(SINE_LENGTH * moveTimer * delta)));
-        } else {
-            kobold.moveTimer = 0;
-            koboldSprite.y = 0;
         }
     })
 }
