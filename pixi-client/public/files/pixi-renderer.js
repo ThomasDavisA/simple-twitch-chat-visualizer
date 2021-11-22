@@ -22,7 +22,7 @@ app.resizeTo = window;
 const Y_AXIS_LOWER_BOUND = app.screen.height - 200;
 const Y_AXIS_UPPER_BOUND = app.screen.height - 80;
 const X_AXIS_UPPER_BOUND = app.screen.width - 100;
-const X_AXIS_LOWER_BOUND = 100;
+const X_AXIS_LOWER_BOUND = 200;
 
 fetcher((data) => {
 	fetchstore(data, (event, data) => {
