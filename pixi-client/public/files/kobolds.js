@@ -4,6 +4,8 @@ const WANDER_DISTANCE = 3,
     SINE_LENGTH = .2,
     HOP_DISTANCE = Math.PI * 10;
 
+const STREAMER_WIDTH = 200;
+
 const nameStyle = new PIXI.TextStyle({
     fontFamily: 'Arial',
     fontSize: 16,
@@ -75,7 +77,7 @@ function removeKobold(data) {
 
 function updateKoboldPosition(width, heightMax, heightMin, delta) {
     koboldList.forEach(kobold => {
-            if (!kobold.isStreamer) {
+        if (!kobold.isStreamer) {
             const { wanderTick, koboldSprite, vSpeed, moveTimer, koboldPlate } = kobold;
             let vel = 0;
             let moveFlag = false;
@@ -86,7 +88,7 @@ function updateKoboldPosition(width, heightMax, heightMin, delta) {
             if (wanderTick < 0) {
                 //set new point to go to
                 let koboldDistance = ((Math.floor(Math.random() * ((WANDER_DISTANCE * 2) + 1)) - WANDER_DISTANCE) * HOP_DISTANCE);
-                if (((koboldDistance + koboldPlate.x + HOP_DISTANCE) >= width) || ((koboldDistance + koboldPlate.x - HOP_DISTANCE) <= 0)) {
+                if (((koboldDistance + koboldPlate.x + HOP_DISTANCE) >= width) || ((koboldDistance + koboldPlate.x - HOP_DISTANCE) <= STREAMER_WIDTH)) {
                     koboldDistance = koboldDistance * -1;
                 }
 
