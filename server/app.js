@@ -9,8 +9,18 @@ const corsOptions = {
 	optionsSuccessStatus: 200
 }
 
+const https = require("https"),
+	fs = require("fs"),
+	helmet = require("helmet");
+
+const options = {
+	key: fs.readFileSync(`C:/Certbot/live/koboldchatterers.com/privkey.pem`),
+	cert: fs.readFileSync(`C:/Certbot/live/koboldchatterers.com/fullchain.pem`),
+};
+
 const app = express();
 app.use(cors(corsOptions))
+app.use(helmet())
 
 const { NODE_ENV, PORT, CHANNELS } = require('./config');
 
@@ -140,6 +150,8 @@ app.use(function errorHandler(error, req, res, next) {
 app.listen(PORT, () => {
 	console.log(`Server Listening at http://localhost:${PORT}`)
 })
+
+https.createServer(options, app).listen(8080);
 
 //debug
 // setInterval(() => {
