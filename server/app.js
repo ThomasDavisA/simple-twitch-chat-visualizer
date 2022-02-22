@@ -1,6 +1,8 @@
 const tmi = require('tmi.js');
 const express = require('express');
 const cors = require('cors');
+const crypto = require("crypto");
+const { NODE_ENV, PORT, CHANNELS, MY_TWITCH_SIGNING } = require('./config');
 
 const { getTwitchToken, getUserByUsername } = require('./twitch-api-service');
 
@@ -18,11 +20,44 @@ const options = {
 	cert: fs.readFileSync(`C:/Certbot/live/koboldchatterers.com/fullchain.pem`),
 };
 
+//Twitch Verify code
+const verifyTwitchSignature = (req, res, buf, encoding) => {
+	const messageId = req.header("Twitch-Eventsub-Message-Id");
+	const timestamp = req.header("Twitch-Eventsub-Message-Timestamp");
+	const messageSignature = req.header("Twitch-Eventsub-Message-Signature");
+	const time = Math.floor(new Date().getTime() / 1000);
+	console.log(`Message ${messageId} Signature: `, messageSignature);
+  
+	if (Math.abs(time - timestamp) > 600) {
+	  // needs to be < 10 minutes
+	  console.log(`Verification Failed: timestamp > 10 minutes. Message Id: ${messageId}.`);
+	  throw new Error("Ignore this request.");
+	}
+  
+	if (!MY_TWITCH_SIGNING) {
+	  console.log(`Twitch signing secret is empty.`);
+	  throw new Error("Twitch signing secret is empty.");
+	}
+  
+	const computedSignature =
+	  "sha256=" +
+	  crypto
+		.createHmac("sha256", MY_TWITCH_SIGNING)
+		.update(messageId + timestamp + buf)
+		.digest("hex");
+	console.log(`Message ${messageId} Computed Signature: `, computedSignature);
+  
+	if (messageSignature !== computedSignature) {
+	  throw new Error("Invalid signature.");
+	} else {
+	  console.log("Verification successful");
+	}
+  };
+
 const app = express();
 app.use(cors(corsOptions))
 app.use(helmet())
-
-const { NODE_ENV, PORT, CHANNELS } = require('./config');
+app.use(express.json({verify: verifyTwitchSignature}))
 
 const client = new tmi.Client({
 	channels: [ CHANNELS ]
@@ -134,6 +169,23 @@ app.get('/api/users/messages', function (req, res) {
 	userMessages.length = 0;
 	res.json(sendMessages)
 })
+
+app.post("/webhooks/callback", async (req, res) => {
+	const messageType = req.header("Twitch-Eventsub-Message-Type");
+	if (messageType === "webhook_callback_verification") {
+		console.log("Verifying Webhook");
+		return res.status(200).send(req.body.challenge);
+	}
+	const { type } = req.body.subscription;
+	const { event } = req.body;
+  
+	console.log(
+	  `Receiving ${type} request for ${event.broadcaster_user_name}: `,
+	  event
+	);
+  
+	res.status(200).end();
+});
 
 app.use(function errorHandler(error, req, res, next) {
     let response
