@@ -42,6 +42,11 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher) {
         koboldSprite = new Sprite(Resources[`files/sprites/dragon/dragon_kealldin.png`].texture);
     }
 
+    //check for custom kobold
+    if (data.displayName == "AzaleaThorns") {
+        koboldSprite = new Sprite(Resources[`files/sprites/kobold/Kobold_AzaleaThorns.png`].texture);
+    }
+
     koboldSprite.scale.x = .25;
     koboldSprite.scale.y = .25;
     koboldSprite.anchor.set(0.5);
