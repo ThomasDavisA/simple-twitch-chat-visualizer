@@ -43,8 +43,12 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher) {
     }
 
     //check for custom kobold
-    if (data.displayName == "AzaleaThorns") {
+    if (data.userId == 60137472) {
         koboldSprite = new Sprite(Resources[`files/sprites/kobold/Kobold_AzaleaThorns.png`].texture);
+    }
+
+    if (data.userId == 55151991) {
+        koboldSprite = new Sprite(Resources[`files/sprites/kobold/Kobold_Red.png`].texture);
     }
 
     koboldSprite.scale.x = .25;
