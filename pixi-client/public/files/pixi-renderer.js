@@ -47,6 +47,8 @@ const koboldTexture = TextureCache['files/sprites/kobold/Kobold_001.png'];
 Loader.add('files/sprites/kobold/Kobold_001.png')
 	.add('files/sprites/kobold/Kobold_002.png')
 	.add('files/sprites/kobold/Kobold_003.png')
+    .add('files/sprites/kobold/Kobold_AzaleaThorns.png')
+    .add('files/sprites/kobold/Kobold_Red.png')
     .add('files/sprites/dragon/dragon_kealldin.png')
     .load(setup);
 
