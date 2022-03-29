@@ -52,7 +52,7 @@ const verifyTwitchSignature = (req, res, buf, encoding) => {
 	} else {
 	  console.log("Verification successful");
 	}
-  };
+};
 
 const app = express();
 app.use(cors(corsOptions))
@@ -76,7 +76,8 @@ client.connect();
 //make sure to get the current room when you first start up 
 
 client.on('join', (channel, username, self) => {
-	if (self || username === 'streamlabs') return;
+	if (self) return;
+	if (username === 'streamlabs' || username === 'pretzelrocks' || username === 'streamelements' || username === 'streamcaptainbot') return;
 	console.log(`${username} has joined ${channel}`);
 	if(!userList[username]) {
 		userList[username] = {};
@@ -108,7 +109,7 @@ client.on("ban", (channel, username, reason, userstate) => {
 client.on('message', (channel, tags, message, self) => {
 	//ignore commands for now
 	if (self || message.startsWith('!')) return;
-	if (tags.username === 'streamlabs' || tags.username === 'pretzelrocks') return;
+	if (tags.username === 'streamlabs' || tags.username === 'pretzelrocks' || tags.username === 'streamelements' || tags.username === 'streamcaptainbot') return;
 	
 	console.log(`${tags['display-name']}: ${message}`);
 	//console.log(tags);
@@ -123,7 +124,8 @@ client.on('message', (channel, tags, message, self) => {
 			([key, value]) => {
 				
 				const stringToCut = value[0].split('-')
-				const emoteString = message.substr(stringToCut[0], stringToCut[1] - stringToCut[0] + 1);
+				//const emoteString = message.substr(stringToCut[0], stringToCut[1] - stringToCut[0] + 1);
+				const emoteString = message.slice(stringToCut[0], stringToCut[1] - stringToCut[0] + 1);
 
 				const currentEmote = {
 					emoteId: key,
@@ -203,7 +205,7 @@ app.listen(PORT, () => {
 	console.log(`Server Listening at http://localhost:${PORT}`)
 })
 
-https.createServer(options, app).listen(8080);
+https.createServer(options, app).listen(443);
 
 //debug
 // setInterval(() => {
