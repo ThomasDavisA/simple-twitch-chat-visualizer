@@ -27,7 +27,22 @@ const X_AXIS_LOWER_BOUND = 200;
 fetcher((data) => {
 	fetchstore(data, (event, data) => {
 		if (event == FS_EVENTS.ADD_USER) {
-            const newUser = addNewKobold(data, Y_AXIS_LOWER_BOUND, Y_AXIS_UPPER_BOUND, X_AXIS_LOWER_BOUND, X_AXIS_UPPER_BOUND);
+
+            //Check if custom kobold resource exists - Give default Kobold otherwise
+            let resourceName = '';
+            //console.log(Object.keys(Resources));
+            if (data.displayName.toLowerCase() in Resources) {
+                console.log('pass');
+                resourceName = data.displayName.toLowerCase();
+            }
+
+            if (resourceName === '') {
+                console.log('fail');
+                let koboldNumber = Math.floor(Math.random() * 3) + 1;
+                resourceName = `kobold_type_${koboldNumber}`;
+            }
+
+            const newUser = addNewKobold(data, Y_AXIS_LOWER_BOUND, Y_AXIS_UPPER_BOUND, X_AXIS_LOWER_BOUND, X_AXIS_UPPER_BOUND, resourceName);
             app.stage.addChild(newUser.koboldPlate);
             newUser.chatBubble = new ChatBubble(newUser.koboldPlate);
 		} else if (event == FS_EVENTS.REMOVE_USER) {
@@ -44,12 +59,14 @@ fetcher((data) => {
 
 const koboldTexture = TextureCache['files/sprites/kobold/Kobold_001.png'];
 
-Loader.add('files/sprites/kobold/Kobold_001.png')
-	.add('files/sprites/kobold/Kobold_002.png')
-	.add('files/sprites/kobold/Kobold_003.png')
-    .add('files/sprites/kobold/Kobold_AzaleaThorns.png')
-    .add('files/sprites/kobold/Kobold_Red.png')
-    .add('files/sprites/dragon/dragon_kealldin.png')
+Loader.add('kobold_type_1', 'files/sprites/kobold/Kobold_001.png')
+	.add('kobold_type_2', 'files/sprites/kobold/Kobold_002.png')
+	.add('kobold_type_3', 'files/sprites/kobold/Kobold_003.png')
+    .add('azaleathorns', 'files/sprites/kobold/Kobold_AzaleaThorns.png')
+    .add('redflashdrive', 'files/sprites/kobold/Kobold_Red.png')
+    .add('mierno', 'files/sprites/kobold/Kobold_Meirno.png')
+    .add('malicious_magpie', 'files/sprites/kobold/Kobold_Magpie.png')
+    .add('kealldin', 'files/sprites/dragon/dragon_kealldin.png')
     .load(setup);
 
 function setup() {
