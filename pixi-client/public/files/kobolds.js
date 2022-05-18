@@ -19,7 +19,7 @@ const TextureCache = PIXI.utils.TextureCache,
     Resources = PIXI.Loader.shared.resources,
     Sprite = PIXI.Sprite;
 
-function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher) {
+function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher, resourceName) {
     const newKobold = {
         userId: data.userId,
         name: data.displayName,
@@ -32,25 +32,28 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher) {
     }
 
     //Inits Kobold Sprite
-    let koboldNumber = Math.floor(Math.random() * 3) + 1;
-    let koboldSprite = new Sprite(Resources[`files/sprites/kobold/Kobold_00${koboldNumber}.png`].texture);
+    /*
+    
+    try
+    check if sprite is already in resources
+    if not
+
+    loader.add(files/spriets/kobold/`resourcename`.png)
+    .load()
+        load sprite (resource[resourcename])
+        catch
+        loader.add(fioles/sprites/kobold/koblold1.png)
+    */
+   
+    let koboldSprite = new Sprite(Resources[resourceName].texture);
 
     //overwrite if it is the Streamer
     if (data.isStreamer) {
         newKobold.posx = 50;
         newKobold.posy = ((yAxisHigher - yAxisLower) / 2) + yAxisLower;
-        koboldSprite = new Sprite(Resources[`files/sprites/dragon/dragon_kealldin.png`].texture);
+        koboldSprite = new Sprite(Resources.kealldin.texture);
     }
-
-    //check for custom kobold
-    if (data.userId == 60137472) {
-        koboldSprite = new Sprite(Resources[`files/sprites/kobold/Kobold_AzaleaThorns.png`].texture);
-    }
-
-    if (data.userId == 55151991) {
-        koboldSprite = new Sprite(Resources[`files/sprites/kobold/Kobold_Red.png`].texture);
-    }
-
+    
     koboldSprite.scale.x = .25;
     koboldSprite.scale.y = .25;
     koboldSprite.anchor.set(0.5);
