@@ -20,8 +20,6 @@ const TextureCache = PIXI.utils.TextureCache,
     Resources = PIXI.Loader.shared.resources,
     Sprite = PIXI.Sprite;
 
-const colorMatrix = new PIXI.filters.colorMatrixFilter();
-
 function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher, resourceName) {
     const newKobold = {
         userId: data.userId,
@@ -65,19 +63,37 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher, re
     const koboldSpriteFull = new PIXI.Container();
 
     //if not custom kobold, add masking layers
+    //We are using tint as it is most accessable and easy to understand
+    //NOTE: All tinted layers should be as light as possible, as tinting only -darkens-.
     if (!data.isCustom) {
         const koboldMask1 = new Sprite(Resources[`${resourceName}_mask_1`].texture);
         const koboldMask2 = new Sprite(Resources[`${resourceName}_mask_2`].texture);
 
-        //hard-coded values for now on what color palletes we want for masks
+        //hard coded values for each kobold color
+        //color guide for each kobold
+        // 0- Grey/White   1- Green/White  2- Blue/White   3- Dark Red/Red 4- Pink/Light Pink
+        // 5- Yellow       6- Purple       7- Cyan/Green   8- Red/Yellow   9- Grey/Light Grey
+        // 10- Green/LtGrn 11-Kealldin
+
+        const mask1Colors = [0xFFFFFF, 0x34c25a, 0x226df0, 0x9c3627, 0xf5a2ed,
+                             0xf0ff24, 0xeb23da, 0x20e3f5, 0xf72048, 0xa8a8a8,
+                             0x12c73c, 0x52a8f2];
+        const mask2Colors = [0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xfa6a55, 0xffd4fb,
+                             0xeef2b6, 0xf75eea, 0xa8f587, 0xffff54, 0xd9d9d9,
+                             0xafdbba, 0xe5f5e4];
+        let maskColors = [0xFFFFFF, 0xFFFFFF];
+        let x = Math.floor(Math.random() * mask1Colors.length)
+
         koboldMask1.scale.x = KOBOLD_SCALE;
         koboldMask1.scale.y = KOBOLD_SCALE;
         koboldMask1.anchor.set(0.5);
-        
 
         koboldMask2.scale.x = KOBOLD_SCALE;
         koboldMask2.scale.y = KOBOLD_SCALE;
         koboldMask2.anchor.set(0.5);
+
+        koboldMask1.tint = 1 * mask1Colors[x];
+        koboldMask2.tint = 1 * mask2Colors[x];
 
         koboldSpriteFull.addChild(koboldMask2, koboldMask1, koboldSprite);
     } else {
