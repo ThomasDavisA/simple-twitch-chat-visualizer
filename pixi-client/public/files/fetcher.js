@@ -3,8 +3,8 @@ const API_USERS = "api/users";
 const API_USERS_MESSAGES = "api/users/messages";
 
 // Debug flags for testing.
-const TEST_USERS = true;
-const TEST_USERS_RANDOM = true;
+const TEST_USERS = false;
+const TEST_USERS_RANDOM = false;
 const TEST_MESSAGES = false;
 const TEST_EMOTES = false;
 

@@ -100,9 +100,6 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher, re
         koboldSpriteFull.addChild(koboldSprite);    
     }
 
-    // koboldSpriteFull.scale.x = KOBOLD_SCALE;
-    // koboldSpriteFull.scale.y = KOBOLD_SCALE;
-
     const koboldPlate = new PIXI.Container();
     koboldPlate.x = newKobold.posx;
     koboldPlate.y = newKobold.posy;

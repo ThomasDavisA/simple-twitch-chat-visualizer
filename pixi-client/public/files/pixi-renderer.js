@@ -4,7 +4,7 @@ import { addMessage, addNewKobold, removeKobold, updateKoboldPosition } from './
 import { ChatBubble } from './chat-bubble.js';
 
 //Debug flag for testing.
-const TEST_DEBUG = true;
+const TEST_DEBUG = false;
 
 const TextureCache = PIXI.utils.TextureCache,
     Loader = PIXI.Loader.shared,
@@ -41,11 +41,11 @@ fetcher((data) => {
                 console.log('fail');
                 let koboldNumber = Math.floor(Math.random() * 3) + 1;
                 resourceName = `kobold_type_${koboldNumber}`;
+
+                //when we are ready to introduce the other types, we will reintroduce randomization
+                resourceName = `kobold_type_1`
                 data.isCustom = false;
             }
-
-            resourceName = `kobold_type_1`
-            data.isCustom = false;
 
             const newUser = addNewKobold(data, Y_AXIS_LOWER_BOUND, Y_AXIS_UPPER_BOUND, X_AXIS_LOWER_BOUND, X_AXIS_UPPER_BOUND, resourceName);
             app.stage.addChild(newUser.koboldPlate);
