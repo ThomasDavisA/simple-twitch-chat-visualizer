@@ -28,7 +28,8 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher, re
         vSpeed: 2,
         moveTimer: 0,
         wanderTick: 0,
-        isStreamer: data.isStreamer || false
+        isStreamer: data.isStreamer || false,
+        isCustom: data.isCustom
     }
 
     //Inits Kobold Sprite
@@ -48,17 +49,36 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher, re
     let koboldSprite = new Sprite(Resources[resourceName].texture);
 
     //overwrite if it is the Streamer
-    if (data.isStreamer) {
-        newKobold.posx = 50;
-        newKobold.posy = ((yAxisHigher - yAxisLower) / 2) + yAxisLower;
-        koboldSprite = new Sprite(Resources.kealldin.texture);
-    }
+    // if (data.isStreamer) {
+    //     newKobold.posx = 50;
+    //     newKobold.posy = ((yAxisHigher - yAxisLower) / 2) + yAxisLower;
+    //     koboldSprite = new Sprite(Resources.kealldin.texture);
+    // }
     
     koboldSprite.scale.x = .25;
     koboldSprite.scale.y = .25;
     koboldSprite.anchor.set(0.5);
 
     const koboldPlate = new PIXI.Container();
+
+    //if not custom kobold, add masking layers
+    if (!data.isCustom) {
+        const koboldMask1 = new Sprite(Resources[`${resourceName}_mask_1`].texture);
+        const koboldMask2 = new Sprite(Resources[`${resourceName}_mask_2`].texture);
+
+        //hard-coded values for now on what color palletes we want for masks
+        koboldMask1.scale.x = .25;
+        koboldMask1.scale.y = .25;
+        koboldMask1.anchor.set(0.5);
+        koboldMask1.tint = 0xFFFFFF;
+
+        koboldMask2.scale.x = .25;
+        koboldMask2.scale.y = .25;
+        koboldMask2.anchor.set(0.5);
+
+        koboldPlate.addChild(koboldMask2, koboldMask1);
+    }
+
     koboldPlate.x = newKobold.posx;
     koboldPlate.y = newKobold.posy;
     koboldPlate.addChild(koboldSprite);

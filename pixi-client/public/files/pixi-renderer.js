@@ -34,12 +34,14 @@ fetcher((data) => {
             if (data.displayName.toLowerCase() in Resources) {
                 console.log('pass');
                 resourceName = data.displayName.toLowerCase();
+                data.isCustom = true;
             }
 
             if (resourceName === '') {
                 console.log('fail');
                 let koboldNumber = Math.floor(Math.random() * 3) + 1;
                 resourceName = `kobold_type_${koboldNumber}`;
+                data.isCustom = false;
             }
 
             const newUser = addNewKobold(data, Y_AXIS_LOWER_BOUND, Y_AXIS_UPPER_BOUND, X_AXIS_LOWER_BOUND, X_AXIS_UPPER_BOUND, resourceName);
@@ -59,9 +61,11 @@ fetcher((data) => {
 
 const koboldTexture = TextureCache['files/sprites/kobold/Kobold_001.png'];
 
-Loader.add('kobold_type_1', 'files/sprites/kobold/Kobold_001.png')
+Loader.add('kobold_type_1', 'files/sprites/kobold/Kobold_Type_001.png')
 	.add('kobold_type_2', 'files/sprites/kobold/Kobold_002.png')
 	.add('kobold_type_3', 'files/sprites/kobold/Kobold_003.png')
+    .add('kobold_type_1_mask_1', 'files/sprites/kobold/Kobold_001_Mask_1.png')
+    .add('kobold_type_1_mask_2', 'files/sprites/kobold/Kobold_001_Mask_2.png')
     .add('azaleathorns', 'files/sprites/kobold/Kobold_AzaleaThorns.png')
     .add('redflashdrive', 'files/sprites/kobold/Kobold_Red.png')
     .add('mierno', 'files/sprites/kobold/Kobold_Meirno.png')
