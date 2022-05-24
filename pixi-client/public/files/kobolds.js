@@ -5,6 +5,7 @@ const WANDER_DISTANCE = 3,
     HOP_DISTANCE = Math.PI * 10;
 
 const STREAMER_WIDTH = 200;
+const KOBOLD_SCALE = .25;
 
 const nameStyle = new PIXI.TextStyle({
     fontFamily: 'Arial',
@@ -18,6 +19,8 @@ const TextureCache = PIXI.utils.TextureCache,
     Loader = PIXI.Loader.shared,
     Resources = PIXI.Loader.shared.resources,
     Sprite = PIXI.Sprite;
+
+const colorMatrix = new PIXI.filters.colorMatrixFilter();
 
 function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher, resourceName) {
     const newKobold = {
@@ -48,18 +51,18 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher, re
    
     let koboldSprite = new Sprite(Resources[resourceName].texture);
 
-    //overwrite if it is the Streamer
-    // if (data.isStreamer) {
-    //     newKobold.posx = 50;
-    //     newKobold.posy = ((yAxisHigher - yAxisLower) / 2) + yAxisLower;
-    //     koboldSprite = new Sprite(Resources.kealldin.texture);
-    // }
+    // overwrite if it is the Streamer
+    if (data.isStreamer) {
+        newKobold.posx = 50;
+        newKobold.posy = ((yAxisHigher - yAxisLower) / 2) + yAxisLower;
+        koboldSprite = new Sprite(Resources.kealldin.texture);
+    }
     
-    koboldSprite.scale.x = .25;
-    koboldSprite.scale.y = .25;
+    koboldSprite.scale.x = KOBOLD_SCALE;
+    koboldSprite.scale.y = KOBOLD_SCALE;
     koboldSprite.anchor.set(0.5);
 
-    const koboldPlate = new PIXI.Container();
+    const koboldSpriteFull = new PIXI.Container();
 
     //if not custom kobold, add masking layers
     if (!data.isCustom) {
@@ -67,28 +70,35 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher, re
         const koboldMask2 = new Sprite(Resources[`${resourceName}_mask_2`].texture);
 
         //hard-coded values for now on what color palletes we want for masks
-        koboldMask1.scale.x = .25;
-        koboldMask1.scale.y = .25;
+        koboldMask1.scale.x = KOBOLD_SCALE;
+        koboldMask1.scale.y = KOBOLD_SCALE;
         koboldMask1.anchor.set(0.5);
-        koboldMask1.tint = 0xFFFFFF;
+        
 
-        koboldMask2.scale.x = .25;
-        koboldMask2.scale.y = .25;
+        koboldMask2.scale.x = KOBOLD_SCALE;
+        koboldMask2.scale.y = KOBOLD_SCALE;
         koboldMask2.anchor.set(0.5);
 
-        koboldPlate.addChild(koboldMask2, koboldMask1);
+        koboldSpriteFull.addChild(koboldMask2, koboldMask1, koboldSprite);
+    } else {
+        koboldSpriteFull.addChild(koboldSprite);    
     }
 
+    // koboldSpriteFull.scale.x = KOBOLD_SCALE;
+    // koboldSpriteFull.scale.y = KOBOLD_SCALE;
+
+    const koboldPlate = new PIXI.Container();
     koboldPlate.x = newKobold.posx;
     koboldPlate.y = newKobold.posy;
-    koboldPlate.addChild(koboldSprite);
+    koboldPlate.addChild(koboldSpriteFull);
+  
 
     newKobold.koboldPlate = koboldPlate;
-    newKobold.koboldSprite = koboldSprite;
+    newKobold.koboldSprite = koboldSpriteFull;
 
     const koboldName = new PIXI.Text(newKobold.name, nameStyle);
     koboldName.position.set(0, koboldSprite.y + (koboldSprite.height / 2));
-    koboldSprite.position.set((koboldName.width / 2), 0)
+    koboldSpriteFull.position.set((koboldName.width / 2), 0)
     koboldPlate.addChild(koboldName);
 
     koboldList.push(newKobold);
@@ -141,10 +151,10 @@ function updateKoboldPosition(width, heightMax, heightMin, delta) {
 
                 if (kobold.destinationX > koboldPlate.x) {
                     kobold.vx = vel; 
-                    koboldSprite.scale.x = .25;
+                    koboldSprite.scale.x = 1;
                 } else {
                     kobold.vx = vel * -1;
-                    koboldSprite.scale.x = -.25;
+                    koboldSprite.scale.x = -1;
                 }
                 
                 koboldPlate.x += kobold.vx;
