@@ -95,7 +95,24 @@ function addNewKobold(data, yAxisLower, yAxisHigher, xAxisLower, xAxisHigher, re
         koboldMask1.tint = 1 * mask1Colors[x];
         koboldMask2.tint = 1 * mask2Colors[x];
 
+        //Add Pirate Hat, and Crown
+        const koboldHat = new Sprite(Resources[`${resourceName}_pirate_hat`].texture);
+        koboldHat.scale.x = KOBOLD_SCALE;
+        koboldHat.scale.y = KOBOLD_SCALE;
+        koboldHat.anchor.set(0.5);
+
+        const koboldSub = new Sprite(Resources[`${resourceName}_sub`].texture);
+        koboldSub.scale.x = KOBOLD_SCALE;
+        koboldSub.scale.y = KOBOLD_SCALE;
+        koboldSub.anchor.set(0.5);
+
         koboldSpriteFull.addChild(koboldMask2, koboldMask1, koboldSprite);
+
+        //koboldSpriteFull.addChild(koboldHat);
+
+        if (data.isSubbed) {
+            koboldSpriteFull.addChild(koboldSub);
+        }
     } else {
         koboldSpriteFull.addChild(koboldSprite);    
     }
