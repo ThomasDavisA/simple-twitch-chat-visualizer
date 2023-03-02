@@ -4,7 +4,7 @@ import { addMessage, addNewKobold, removeKobold, updateKoboldPosition } from './
 import { ChatBubble } from './chat-bubble.js';
 
 //Debug flag for testing.
-const TEST_DEBUG = false;
+const TEST_DEBUG = true;
 
 const TextureCache = PIXI.utils.TextureCache,
     Loader = PIXI.Loader.shared,
@@ -71,6 +71,7 @@ Loader.add('kobold_type_1', 'files/sprites/kobold/Kobold_Type_001.png')
     .add('kobold_type_1_mask_2', 'files/sprites/kobold/Kobold_Type_001_Mask_2.png')
     .add('kobold_type_1_sub', 'files/sprites/kobold/Kobold_Type_001_Sub.png')
     .add('kobold_type_1_pirate_hat', 'files/sprites/kobold/Kobold_Type_001_Pirate_Hat_edit.png')
+    .add('kobold_halloween', 'files/sprites/kobold/Kobold_Holiday_Bat_Wings.png')
     .add('azaleathorns', 'files/sprites/kobold/Kobold_AzaleaThorns.png')
     .add('oceanity', 'files/sprites/kobold/Kobold_Oceanity.png')
     .add('redflashdrive', 'files/sprites/kobold/Kobold_Red.png')
@@ -83,6 +84,10 @@ Loader.add('kobold_type_1', 'files/sprites/kobold/Kobold_Type_001.png')
     .add('shadowdemonakura', 'files/sprites/kobold/Kobold_ShadowDemonAkura.png')
     .add('xyzzysqrl', 'files/sprites/kobold/Kobold_XyzzySqrl.png')
     .add('besanigoesmoo', 'files/sprites/kobold/Kobold_Besani.png')
+    .add('zyf4', 'files/sprites/kobold/Kobold_Zyf4.png')
+    .add('archineerrob', 'files/sprites/kobold/Kobold_ArchineerRob.png')
+    .add('disqorded', 'files/sprites/kobold/Kobold_DisQorded.png')
+    .add('silvereagledev', 'files/sprites/kobold/Kobold_SilverEagleDev.png')
     .add('kealldin', 'files/sprites/dragon/dragon_kealldin.png')
     .load(setup);
 

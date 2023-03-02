@@ -6,6 +6,7 @@
     "author": "Thomas Davis",
     "license": "ISC",
     "dependencies": {
+        "@pixi/text-html": "^3.0.2",
         "express": "^4.17.1",
         "nodemon": "^2.0.14",
         "pixi.js": "^6.1.3"

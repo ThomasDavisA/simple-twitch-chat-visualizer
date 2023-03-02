@@ -7,6 +7,7 @@ const TEST_USERS = false;
 const TEST_USERS_RANDOM = false;
 const TEST_MESSAGES = false;
 const TEST_EMOTES = false;
+const TEST_CUSTOMS = false;
 
 function fetchTestUsers() {
 	let result = {
@@ -29,6 +30,26 @@ function fetchTestUsers() {
 			keys.splice(index, 1);
 		}
 	}
+
+	return result;
+}
+
+function fetchTestCustoms() {
+	let result = {
+		"1": {userId: "1", displayName: "azaleathorns"},
+		"2": {userId: "2", displayName: "oceanity"},
+		"3": {userId: "3", displayName: "redflashdrive"},
+		"4": {userId: "4", displayName: "meirno"},
+		"5": {userId: "5", displayName: "malicious_magpie"},
+		"6": {userId: "6", displayName: "floofydragons"},
+		"7": {userId: "7", displayName: "cwtyger"},
+		"8": {userId: "8", displayName: "deathknight972"},
+		"9": {userId: "9", displayName: "ventira_gaming"},
+		"10": {userId: "10", displayName: "shadowdemonakura"},
+		"11": {userId: "11", displayName: "xyzzysqrl"},
+		"12": {userId: "12", displayName: "besanigoesmoo"},
+		"13": {userId: "13", displayName: "zyf4"},
+	};
 
 	return result;
 }
@@ -101,7 +122,11 @@ async function fetchMessages() {
 async function onFetch(callback) {
 	let users = {};
 	if (TEST_USERS) {
-		users = fetchTestUsers();
+		if (TEST_CUSTOMS) {
+			users = fetchTestCustoms();
+		} else {
+			users = fetchTestUsers();
+		}
 	} else {
 		users = await fetchUsers();
 	}
