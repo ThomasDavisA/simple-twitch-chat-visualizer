@@ -1,193 +1,122 @@
-const tmi = require('tmi.js');
+//const twurpleHttp = require('@twurple/eventsub-http');
+const twurpleAuth = require('@twurple/auth')
+const twurpleApi = require('@twurple/api')
+const twurpleChat = require('@twurple/chat')
+
 const express = require('express');
 const cors = require('cors');
-const crypto = require("crypto");
-const { NODE_ENV, PORT, CHANNELS, MY_TWITCH_SIGNING } = require('./config');
+const helmet = require("helmet");
+const { NODE_ENV, PORT, CHANNELS, MY_TWITCH_SIGNING, CLIENT_ID, MY_CLIENT_SECRET } = require('./config');
 
-const { getTwitchToken, getUserByUsername } = require('./twitch-api-service');
-
-const corsOptions = {
-	origin: "*",
-	optionsSuccessStatus: 200
-}
-
-const https = require("https"),
-	fs = require("fs"),
-	helmet = require("helmet");
-
-const options = {
-	key: fs.readFileSync(`C:/Certbot/live/koboldchatterers.com/privkey.pem`),
-	cert: fs.readFileSync(`C:/Certbot/live/koboldchatterers.com/fullchain.pem`),
-};
-
-//Twitch Verify code
-const verifyTwitchSignature = (req, res, buf, encoding) => {
-	const messageId = req.header("Twitch-Eventsub-Message-Id");
-	const timestamp = req.header("Twitch-Eventsub-Message-Timestamp");
-	const messageSignature = req.header("Twitch-Eventsub-Message-Signature");
-	const time = Math.floor(new Date().getTime() / 1000);
-	console.log(`Message ${messageId} Signature: `, messageSignature);
-  
-	if (Math.abs(time - timestamp) > 600) {
-	  // needs to be < 10 minutes
-	  console.log(`Verification Failed: timestamp > 10 minutes. Message Id: ${messageId}.`);
-	  throw new Error("Ignore this request.");
-	}
-  
-	if (!MY_TWITCH_SIGNING) {
-	  console.log(`Twitch signing secret is empty.`);
-	  throw new Error("Twitch signing secret is empty.");
-	}
-  
-	const computedSignature =
-	  "sha256=" +
-	  crypto
-		.createHmac("sha256", MY_TWITCH_SIGNING)
-		.update(messageId + timestamp + buf)
-		.digest("hex");
-	console.log(`Message ${messageId} Computed Signature: `, computedSignature);
-  
-	if (messageSignature !== computedSignature) {
-	  throw new Error("Invalid signature.");
-	} else {
-	  console.log("Verification successful");
-	}
-};
+// Express app and consts for interaction with Kobold Pixi.js client
+const corsOptions = { origin: "*", optionsSuccessStatus: 200 }
 
 const app = express();
 app.use(cors(corsOptions))
 app.use(helmet())
-app.use(express.json({verify: verifyTwitchSignature}))
-
-const client = new tmi.Client({
-	channels: [ CHANNELS ]
-});
 
 const userList = {};
 const userMessages = [];
-let twitchAccessToken = '';
 
-getTwitchToken().then((token) => {
-	twitchAccessToken = token;
-})
+// App Token Auth for Twitch API
+const authProvider = new twurpleAuth.AppTokenAuthProvider(CLIENT_ID, MY_CLIENT_SECRET);
+const staticAuth = new twurpleAuth.StaticAuthProvider(CLIENT_ID, authProvider);
+const apiClient = new twurpleApi.ApiClient({ authProvider });
+const chatClient = new twurpleChat.ChatClient({ staticAuth, channels: [CHANNELS], requestMembershipEvents: true });
 
-client.connect();
+// Async functions for ApiClient
+async function getUserInfo(username) {
+	const user =  await apiClient.users.getUserByName(username);
+	return user;
+}
 
-//make sure to get the current room when you first start up 
+chatClient.connect();
 
-client.on('join', (channel, username, self) => {
-	if (self) return;
-	if (username === 'streamlabs' || username === 'pretzelrocks' || username === 'streamelements' || username === 'streamcaptainbot') return;
-	console.log(`${username} has joined ${channel}`);
-	if(!userList[username]) {
-		userList[username] = {};
-		getUserByUsername(username, twitchAccessToken)
-			.then(res => {
-				const isStreamer = username === channel.slice(1) ? true : false
-				const userStatus = {
-					userName: username,
-					displayName: res.display_name,
-					isStreamer,
-					userId: res.id,
-				}
-				userList[username] = userStatus;
-			});
-		
+chatClient.onJoin(
+	(channel, username) => {
+		console.log(`${username} has joined ${channel}`);
+		if (username === channel) return;
+		if (username.includes('justinfan')) return;
+		if (username === 'streamlabs' || username === 'pretzelrocks' || username === 'streamelements' || username === 'streamcaptainbot') return;
+
+		if(!userList[username]) {
+			userList[username] = {};
+			
+			getUserInfo(username)
+				.then((res) => {
+					const isStreamer = username === channel.slice(1) ? true : false
+					const userStatus = {
+						userName: username,
+						displayName: res.displayName || username,
+						isStreamer,
+						userId: res.id,
+					}
+
+					console.log(userStatus)
+					userList[username] = userStatus;
+				});
+		}
 	}
-})
+);
 
-client.on('part', (channel, username, self) => {
+chatClient.onPart((channel, username) => {
 	console.log(`${username} has left ${channel}`);
-	delete userList[username];
-})
-
-client.on("ban", (channel, username, reason, userstate) => {
-    console.log(`${username} has been banned from the den! ${channel}`)
 	delete userList[username];
 });
 
-client.on('message', (channel, tags, message, self) => {
-	//ignore commands for now
-	if (self || message.startsWith('!')) return;
-	if (tags.username === 'streamlabs' || tags.username === 'pretzelrocks' || tags.username === 'streamelements' || tags.username === 'streamcaptainbot') return;
+chatClient.onBan((channel, username, reason) => {
+    console.log(`${username} has been banned from the den! ${channel}`)
+	console.log('Reason: ', reason);
+	delete userList[username];
+});
+
+chatClient.onMessage((channel, username, message, msgAndUserInfo) => {
+	//Ignore commands for now
+	const { userInfo } = msgAndUserInfo;
+	if (message.startsWith('!')) return;
+	if (username === 'streamlabs' || username === 'pretzelrocks' || username === 'streamelements' || username === 'streamcaptainbot') return;
 	
-	console.log(`${tags['display-name']}: ${message}`);
-	//console.log(tags);
-	let emoteOnlyMessage = false;
-	const emotesList = [];
-	if (tags.emotes) {
-		const emoteSize = `1.0`;
-		if(tags['emote-only']) {
-			emoteOnlyMessage = true;
-		}
-		Object.entries(tags.emotes).forEach(
-			([key, value]) => {
-				
-				const stringToCut = value[0].split('-')
-				//const emoteString = message.substr(stringToCut[0], stringToCut[1] - stringToCut[0] + 1);
-				const emoteString = message.slice(stringToCut[0], stringToCut[1] - stringToCut[0] + 1);
+	console.log(msgAndUserInfo.date)
+	console.log(`${username}: ${message}`);
 
-				const currentEmote = {
-					emoteId: key,
-					emoteCounted: value.length,
-					emoteString,
-					emoteURL: `http://static-cdn.jtvnw.net/emoticons/v1/${key}/${emoteSize}`
-				}
+	const parsedMessage = msgAndUserInfo.parseEmotes();
+	let emoteOnlyMessage = false
 
-				emotesList.push(currentEmote);
-			})
-	}
+	//Ignoring Emotes for now
 
 	const userStatus = {
-		userName: tags.username,
-		isStreamer: tags.username === channel.slice(1) ? true : false,
-		displayName: tags['display-name'],
-		userSubBadge: tags['badge-info'],
-		isUserSubbed: tags.subscriber,
-		userColor: tags.color,
-		userId: tags['user-id'],
-		timeStamp: tags['tmi-sent-ts']
+		userName: userInfo.userName,
+		isStreamer: userInfo.userName === channel.slice(1) ? true : false,
+		displayName: userInfo.displayName,
+		userSubBadge: userInfo.userSubBadge,
+		isUserSubbed: userInfo.isUserSubbed,
+		userColor: userInfo.userColor,
+		userId: userInfo.userId,
+		timeStamp: msgAndUserInfo.date
 	}
-	userList[tags.username] = userStatus;
+	userList[userInfo.userName] = userStatus;
 
 	const messageToStore = {
-		userId: tags['user-id'],
-		emotes: emotesList ?? null,
+		userId: userInfo.userId,
+		emotes: /*emotesList ??*/ null,
 		emoteOnlyMessage,
 		message,
-		timeStamp: tags['tmi-sent-ts']
+		timeStamp: msgAndUserInfo.date
 	}
-	console.log(messageToStore);
+
 	userMessages.push(messageToStore);
 });
 
+//For Kobold Chatterers Client calls
 app.get('/api/users', function (req, res) {
 	res.json(userList)
   })
 
 app.get('/api/users/messages', function (req, res) {
 	let sendMessages = JSON.parse(JSON.stringify(userMessages));
-	console.log(sendMessages)
 	userMessages.length = 0;
 	res.json(sendMessages)
 })
-
-app.post("/webhooks/callback", async (req, res) => {
-	const messageType = req.header("Twitch-Eventsub-Message-Type");
-	if (messageType === "webhook_callback_verification") {
-		console.log("Verifying Webhook");
-		return res.status(200).send(req.body.challenge);
-	}
-	const { type } = req.body.subscription;
-	const { event } = req.body;
-  
-	console.log(
-	  `Receiving ${type} request for ${event.broadcaster_user_name}: `,
-	  event
-	);
-  
-	res.status(200).end();
-});
 
 app.use(function errorHandler(error, req, res, next) {
     let response
@@ -204,10 +133,3 @@ app.use(function errorHandler(error, req, res, next) {
 app.listen(PORT, () => {
 	console.log(`Server Listening at http://localhost:${PORT}`)
 })
-
-https.createServer(options, app).listen(443);
-
-//debug
-// setInterval(() => {
-// 	console.log(userList);
-// }, 10000);
