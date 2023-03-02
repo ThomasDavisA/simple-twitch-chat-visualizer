@@ -1,3 +1,8 @@
+const TextureCache = PIXI.utils.TextureCache,
+    Loader = PIXI.Loader.shared,
+    Resources = PIXI.Loader.shared.resources,
+    Sprite = PIXI.Sprite;
+
 class ChatBubble {
 	static STYLE = {fontSize: 18, align: 'center', wordWrap: true, wordWrapWidth: 400};
 	static PADDING = 30.0;
@@ -33,7 +38,7 @@ class ChatBubble {
 		if (this.messages.length === 0) {
 			return;
 		}
-
+		
 		this.currentMessage = this.messages.shift();
 		this.messageTime = Date.now() + ChatBubble.MESSAGE_TIME;
 
