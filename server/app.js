@@ -37,7 +37,7 @@ chatClient.onJoin(
 		console.log(`${username} has joined ${channel}`);
 		if (username === channel) return;
 		if (username.includes('justinfan')) return;
-		if (username === 'streamlabs' || username === 'pretzelrocks' || username === 'streamelements' || username === 'streamcaptainbot') return;
+		if (username === 'streamlabs' || username === 'pretzelrocks' || username === 'streamelements' || username === 'streamcaptainbot' || username === 'twitch') return;
 
 		if(!userList[username]) {
 			userList[username] = {};
@@ -77,12 +77,16 @@ chatClient.onMessage((channel, username, message, msgAndUserInfo) => {
 	if (username === 'streamlabs' || username === 'pretzelrocks' || username === 'streamelements' || username === 'streamcaptainbot') return;
 	
 	console.log(msgAndUserInfo.date)
+	console.log(msgAndUserInfo.emoteOffsets)
 	console.log(`${username}: ${message}`);
-
-	const parsedMessage = msgAndUserInfo.parseEmotes();
+	const parsedMessage = twurpleChat.parseChatMessage(message, msgAndUserInfo.emoteOffsets);
 	let emoteOnlyMessage = false
-
-	//Ignoring Emotes for now
+	const emoteList = parsedMessage.flatMap(x => {
+		const {type, id} = x;
+		if (type != 'emote') return [];
+		const emoteUrl = twurpleChat.buildEmoteImageUrl(id);
+		return emoteUrl;
+	})
 
 	const userStatus = {
 		userName: userInfo.userName,
@@ -98,11 +102,13 @@ chatClient.onMessage((channel, username, message, msgAndUserInfo) => {
 
 	const messageToStore = {
 		userId: userInfo.userId,
-		emotes: /*emotesList ??*/ null,
+		emotes: emoteList, //emotes in urlstrings
 		emoteOnlyMessage,
 		message,
 		timeStamp: msgAndUserInfo.date
 	}
+
+	
 
 	userMessages.push(messageToStore);
 });

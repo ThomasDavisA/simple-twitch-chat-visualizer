@@ -85,6 +85,9 @@ class ChatBubble {
 		let height = this.graphics.height;
 		let textBounds = this.text.getLocalBounds();
 
+		if (sprite.scale.x == -1)
+			sprite.scale.x = 1;
+
 		this.graphics.x = sprite.x + sprite.width * 0.5;
 		this.graphics.y = sprite.y - sprite.height * 0.75;
 		this.graphics.width = textBounds.width;

@@ -48,8 +48,9 @@ fetcher((data) => {
             }
 
             const newUser = addNewKobold(data, Y_AXIS_LOWER_BOUND, Y_AXIS_UPPER_BOUND, X_AXIS_LOWER_BOUND, X_AXIS_UPPER_BOUND, resourceName);
-            app.stage.addChild(newUser.koboldPlate);
             newUser.chatBubble = new ChatBubble(newUser.koboldPlate);
+            app.stage.addChild(newUser.koboldPlate);
+            
 		} else if (event == FS_EVENTS.REMOVE_USER) {
 			const userToRemove = removeKobold(data)
             app.stage.removeChild(userToRemove.koboldPlate);
@@ -83,11 +84,12 @@ Loader.add('kobold_type_1', 'files/sprites/kobold/Kobold_Type_001.png')
     .add('ventira_gaming', 'files/sprites/kobold/Kobold_Ventira.png')
     .add('shadowdemonakura', 'files/sprites/kobold/Kobold_ShadowDemonAkura.png')
     .add('xyzzysqrl', 'files/sprites/kobold/Kobold_XyzzySqrl.png')
-    .add('besanigoesmoo', 'files/sprites/kobold/Kobold_Besani.png')
+    .add('sakuramoonblossom', 'files/sprites/kobold/Kobold_Sakuramoonblossom.png')
     .add('zyf4', 'files/sprites/kobold/Kobold_Zyf4.png')
     .add('archineerrob', 'files/sprites/kobold/Kobold_ArchineerRob.png')
     .add('disqorded', 'files/sprites/kobold/Kobold_DisQorded.png')
     .add('silvereagledev', 'files/sprites/kobold/Kobold_SilverEagleDev.png')
+    .add('dannidragonheart', 'files/sprites/kobold/Kobold_DanniDragonheart.png')
     .add('kealldin', 'files/sprites/dragon/dragon_kealldin.png')
     .load(setup);
 
